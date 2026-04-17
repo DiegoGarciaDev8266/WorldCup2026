@@ -1,0 +1,6 @@
+node_modules/
+.env
+WorldCup26/node_modules/
+BackEnd/node_modules/
+BackEnd/.env
+dbo.SQLSERVER/
