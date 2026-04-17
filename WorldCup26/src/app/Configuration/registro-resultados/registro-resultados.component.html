@@ -1,0 +1,232 @@
+<body>
+  <main>
+    <div class="user-container">
+      <section>
+
+        <!-- TABS DE NAVEGACIÓN -->
+        <div class="tabs-container">
+          <button class="tab-btn" [class.active]="vistaActiva === 'resultados'"
+            (click)="vistaActiva = 'resultados'">
+            ⚽ Registrar Resultados
+          </button>
+          <button class="tab-btn" [class.active]="vistaActiva === 'posiciones'"
+            (click)="vistaActiva = 'posiciones'">
+            📊 Tabla de Posiciones
+          </button>
+          <button class="tab-btn" [class.active]="vistaActiva === 'auditoria'"
+            (click)="vistaActiva = 'auditoria'">
+            📝 Log de Auditoría
+          </button>
+        </div>
+
+        <!-- ==================== VISTA RESULTADOS ==================== -->
+        <div *ngIf="vistaActiva === 'resultados'">
+
+          <!-- Formulario marcador -->
+          <div class="form-section" *ngIf="partidoSeleccionado">
+            <h3>⚽ Registrar Marcador</h3>
+            <div class="marcador-box">
+              <div class="equipo-marcador">
+                <span class="nombre-equipo">
+                  {{ partidoSeleccionado.NombreLocal }}
+                </span>
+                <div class="goles-control">
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesLocal = golesLocal > 0 ? golesLocal - 1 : 0">−</button>
+                  <span class="goles-numero">{{ golesLocal }}</span>
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesLocal = golesLocal + 1">+</button>
+                </div>
+              </div>
+
+              <div class="vs-separador">VS</div>
+
+              <div class="equipo-marcador">
+                <span class="nombre-equipo">
+                  {{ partidoSeleccionado.NombreVisitante }}
+                </span>
+                <div class="goles-control">
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesVisitante = golesVisitante > 0 ? golesVisitante - 1 : 0">−</button>
+                  <span class="goles-numero">{{ golesVisitante }}</span>
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesVisitante = golesVisitante + 1">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="partido-info mt-3">
+              <span><i class="bi bi-calendar"></i>
+                {{ partidoSeleccionado.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+              <span><i class="bi bi-geo-alt"></i> {{ partidoSeleccionado.Estadio }}</span>
+              <span><i class="bi bi-flag"></i> {{ partidoSeleccionado.Fase }}</span>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+              <button class="btn btn-success" (click)="registrarResultado()">
+                💾 Guardar Resultado
+              </button>
+              <button class="btn btn-secondary" (click)="cancelarSeleccion()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista de partidos -->
+          <div class="table-section" [class.mt-4]="partidoSeleccionado">
+            <h3>🗓️ Partidos Finalizados
+              <span class="badge bg-secondary ms-2">{{ listaPartidos.length }}</span>
+            </h3>
+            <table class="table table-dark table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Local</th>
+                  <th>Marcador</th>
+                  <th>Visitante</th>
+                  <th>Fecha</th>
+                  <th>Fase</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of listaPartidos; let i = index"
+                  [class.fila-seleccionada]="partidoSeleccionado?.PartidoID === p.PartidoID">
+                  <td>{{ i + 1 }}</td>
+                  <td><strong>{{ p.NombreLocal }}</strong></td>
+                  <td class="text-center">
+                    <span *ngIf="p.GolesLocal !== null" class="marcador-tabla"
+                      [ngClass]="getResultadoBadge(p)">
+                      {{ p.GolesLocal }} - {{ p.GolesVisitante }}
+                    </span>
+                    <span *ngIf="p.GolesLocal === null" class="text-muted">Sin resultado</span>
+                  </td>
+                  <td><strong>{{ p.NombreVisitante }}</strong></td>
+                  <td>{{ p.FechaPartido | date:'dd/MM/yyyy' }}</td>
+                  <td><span class="badge bg-primary">{{ p.Fase }}</span></td>
+                  <td>
+                    <button class="btn btn-warning btn-sm" (click)="seleccionarPartido(p)">
+                      <i class="bi bi-pencil-square"></i> Editar
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="listaPartidos.length === 0">
+                  <td colspan="7" class="text-center text-muted py-4">
+                    No hay partidos finalizados
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ==================== VISTA POSICIONES ==================== -->
+        <div *ngIf="vistaActiva === 'posiciones'">
+          <div class="form-section">
+            <h3>📊 Tabla de Posiciones — Fase de Grupos</h3>
+
+            <!-- Selector de grupo -->
+            <div class="grupos-tabs mb-3">
+              <button *ngFor="let g of grupos"
+                class="btn btn-sm me-1 mb-1"
+                [class.btn-primary]="grupoActivo === g"
+                [class.btn-outline-secondary]="grupoActivo !== g"
+                (click)="grupoActivo = g">
+                Grupo {{ g }}
+              </button>
+            </div>
+
+            <table class="table table-dark table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Equipo</th>
+                  <th>PJ</th>
+                  <th>G</th>
+                  <th>E</th>
+                  <th>P</th>
+                  <th>GF</th>
+                  <th>GC</th>
+                  <th>DIF</th>
+                  <th>PTS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let pos of posicionesGrupoActivo; let i = index"
+                  [class.clasificado]="i < 2">
+                  <td>
+                    <span *ngIf="i < 2">🟢</span>
+                    <span *ngIf="i >= 2">⚪</span>
+                    {{ i + 1 }}
+                  </td>
+                  <td><strong>{{ pos.NombreEquipo }}</strong></td>
+                  <td>{{ pos.PartidosJugados }}</td>
+                  <td>{{ pos.Ganados }}</td>
+                  <td>{{ pos.Empatados }}</td>
+                  <td>{{ pos.Perdidos }}</td>
+                  <td>{{ pos.GolesAFavor }}</td>
+                  <td>{{ pos.GolesEnContra }}</td>
+                  <td [class.text-success]="pos.GolesAFavor - pos.GolesEnContra > 0"
+                      [class.text-danger]="pos.GolesAFavor - pos.GolesEnContra < 0">
+                    {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}
+                    {{ pos.GolesAFavor - pos.GolesEnContra }}
+                  </td>
+                  <td><strong class="text-warning">{{ pos.Puntos }}</strong></td>
+                </tr>
+                <tr *ngIf="posicionesGrupoActivo.length === 0">
+                  <td colspan="10" class="text-center text-muted py-3">
+                    Sin datos para el Grupo {{ grupoActivo }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <small class="text-muted">🟢 Clasifican a la siguiente ronda</small>
+          </div>
+        </div>
+
+        <!-- ==================== VISTA AUDITORÍA ==================== -->
+        <div *ngIf="vistaActiva === 'auditoria'">
+          <div class="table-section">
+            <h3>📝 Log de Auditoría
+              <span class="badge bg-secondary ms-2">{{ logAuditoria.length }}</span>
+            </h3>
+            <table class="table table-dark table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Fecha</th>
+                  <th>Partido</th>
+                  <th>Resultado</th>
+                  <th>Usuario</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let log of logAuditoria; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ log.FechaAccion | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ log.NombreLocal }} vs {{ log.NombreVisitante }}</td>
+                  <td>
+                    <span class="marcador-tabla">
+                      {{ log.GolesLocal }} - {{ log.GolesVisitante }}
+                    </span>
+                  </td>
+                  <td>{{ log.UsuarioAccion }}</td>
+                  <td><span class="badge bg-info text-dark">{{ log.TipoAccion }}</span></td>
+                </tr>
+                <tr *ngIf="logAuditoria.length === 0">
+                  <td colspan="6" class="text-center text-muted py-4">
+                    No hay registros de auditoría
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+      <app-start></app-start>
+    </div>
+  </main>
+</body>

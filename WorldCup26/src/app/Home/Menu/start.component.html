@@ -1,0 +1,70 @@
+<div class="sidebar" [class.expanded]="isExpanded">
+
+    <!-- TOP -->
+    <div class="top">
+        <i class="bi bi-bell-fill icon"></i>
+        <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+    </div>
+
+    <ul class="menu">
+        <li routerLink="/Dashboard">
+            <i class="bi bi-globe icon"></i>
+            <span class="text">Estadisticas Generales</span>
+        </li>
+
+       
+
+        <li>
+            <i class="bi bi-bar-chart icon"></i>
+            <span class="text">Tabla posiciones</span>
+        </li>
+
+        <li>
+            <i class="bi bi-calendar icon"></i>
+            <span class="text">Consulta partidos</span>
+        </li>
+
+        <li>
+            <i class="bi bi-broadcast icon"></i>
+            <span class="text">En vivo</span>
+        </li>
+
+        <li>
+            <i class="bi bi-pencil-square icon"></i>
+            <span class="text">Eventos en vivo</span>
+        </li>
+
+        <!-- PREDICCIONES -->
+        <li (click)="toggleSub('pred')">
+            <i class="bi bi-robot icon"></i>
+            <span class="text">Predicciones <i class="bi bi-caret-down-fill"></i></span>
+        </li>
+
+        <ul *ngIf="subMenu.pred" class="submenu">
+            <li>Ganador partido</li>
+            <li>Campeón torneo</li>
+            <li>Explicación</li>
+        </ul>
+
+         <!-- CONFIG -->
+        <li (click)="toggleSub('config')">
+            <i class="bi bi-gear icon"></i>
+            <span class="text">Configuración <i class="bi bi-caret-down-fill"></i> </span>
+        </li>
+
+        <ul *ngIf="subMenu.config" class="submenu">
+            <li routerLink="/Register_UserConfig">Registro de usuarios</li>
+            <li routerLink="/gestion-roles">Gestión de roles</li>
+            <li routerLink="/gestion-selecciones">Registro de equipos</li>
+            <li routerLink="/programacion-calendario">Registro de partidos</li>
+            <li routerLink="/registro-resultados">Registro de resultados oficiales</li>
+        </ul>
+
+        <li (click)="Salir()">
+            <i class="bi bi-door-open icon"></i>
+            <span class="text">Cerrar sesion</span>
+        </li>
+
+    </ul>
+
+</div>

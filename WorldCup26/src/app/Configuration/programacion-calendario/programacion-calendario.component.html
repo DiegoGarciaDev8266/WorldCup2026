@@ -1,0 +1,212 @@
+<body>
+  <main>
+    <div class="user-container">
+
+      <!-- FORMULARIO -->
+      <section>
+        <div class="form-section">
+          <h3>📅 {{ modoEdicion ? 'Editar Partido' : 'Programar Partido' }}</h3>
+
+          <!-- FILA 1: Equipos -->
+          <div class="row">
+            <div class="col-md-6">
+              <label>Equipo Local</label>
+              <select class="form-select" [(ngModel)]="partido.EquipoLocalID">
+                <option [value]="0" disabled>Selecciona equipo local</option>
+                <option *ngFor="let e of listaEquipos"
+                  [value]="e.EquipoID"
+                  [disabled]="e.EquipoID === partido.EquipoVisitanteID">
+                  {{ e.NombreEquipo }}
+                </option>
+              </select>
+              <small *ngIf="listaEquipos.length === 0" class="text-warning">
+                ⚠️ No hay equipos registrados aún
+              </small>
+            </div>
+            <div class="col-md-6">
+              <label>Equipo Visitante</label>
+              <select class="form-select" [(ngModel)]="partido.EquipoVisitanteID">
+                <option [value]="0" disabled>Selecciona equipo visitante</option>
+                <option *ngFor="let e of listaEquipos"
+                  [value]="e.EquipoID"
+                  [disabled]="e.EquipoID === partido.EquipoLocalID">
+                  {{ e.NombreEquipo }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <!-- FILA 2: Fecha y Estadio -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label>Fecha y Hora del Partido</label>
+              <input class="form-control" type="datetime-local"
+                [(ngModel)]="partido.FechaPartido"/>
+            </div>
+            <div class="col-md-6">
+              <label>Estadio</label>
+              <input class="form-control" type="text"
+                [(ngModel)]="partido.Estadio"
+                placeholder="Ej: Estadio Azteca"/>
+            </div>
+          </div>
+
+          <!-- FILA 3: Fase y Estado -->
+          <div class="row mt-2">
+            <div class="col-md-6">
+              <label>Fase</label>
+              <select class="form-select" [(ngModel)]="partido.Fase">
+                <option value="" disabled>Selecciona la fase</option>
+                <optgroup label="— Fase de Grupos —">
+                  <option *ngFor="let g of fasesGrupo" [value]="'Grupo ' + g">
+                    Grupo {{ g }}
+                  </option>
+                </optgroup>
+                <optgroup label="— Eliminación Directa —">
+                  <option *ngFor="let f of fasesEliminacion" [value]="f">
+                    {{ f }}
+                  </option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label>Estado del Juego</label>
+              <select class="form-select" [(ngModel)]="partido.Estado_Juego">
+                <option *ngFor="let e of estadosJuego" [value]="e">{{ e }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-3 d-flex gap-2">
+            <button class="btn btn-success" (click)="onSubmit()">
+              {{ modoEdicion ? '💾 Actualizar' : '➕ Registrar Partido' }}
+            </button>
+            <button class="btn btn-secondary" *ngIf="modoEdicion" (click)="cancelar()">
+              Cancelar
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TABLA -->
+      <section>
+        <div class="table-section mt-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>🗓️ Partidos Programados
+              <span class="badge bg-secondary ms-2">{{ listaPartidos.length }}</span>
+            </h3>
+            <input class="form-control w-25" [(ngModel)]="filtroFase"
+              placeholder="🔍 Filtrar por fase..."/>
+          </div>
+
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Local</th>
+                <th>Visitante</th>
+                <th>Fecha</th>
+                <th>Estadio</th>
+                <th>Fase</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of partidosFiltrados; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td><strong>{{ p.NombreLocal || getNombreEquipo(p.EquipoLocalID) }}</strong></td>
+                <td><strong>{{ p.NombreVisitante || getNombreEquipo(p.EquipoVisitanteID) }}</strong></td>
+                <td>{{ p.FechaPartido | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>{{ p.Estadio }}</td>
+                <td><span class="badge" [ngClass]="getFaseBadgeColor(p.Fase)">{{ p.Fase }}</span></td>
+                <td><span class="badge" [ngClass]="getEstadoBadge(p.Estado_Juego)">{{ p.Estado_Juego }}</span></td>
+                <td class="actions">
+                  <button class="btn btn-info btn-sm" (click)="verPartido(p)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn btn-warning btn-sm" (click)="editarPartido(p)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="eliminarPartido(p)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="partidosFiltrados.length === 0">
+                <td colspan="8" class="text-center text-muted py-4">
+                  No hay partidos programados
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <app-start></app-start>
+    </div>
+  </main>
+
+  <!-- MODAL VER PARTIDO -->
+  <div class="modal fade show d-block" *ngIf="partidoVer"
+    style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">📋 Detalle del Partido</h5>
+          <button type="button" class="btn-close btn-close-white"
+            (click)="partidoVer = null"></button>
+        </div>
+        <div class="modal-body">
+          <div class="detalle-row">
+            <span class="detalle-label">ID</span>
+            <span class="detalle-valor">{{ partidoVer.PartidoID }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Equipo Local</span>
+            <span class="detalle-valor">{{ partidoVer.NombreLocal || getNombreEquipo(partidoVer.EquipoLocalID) }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Equipo Visitante</span>
+            <span class="detalle-valor">{{ partidoVer.NombreVisitante || getNombreEquipo(partidoVer.EquipoVisitanteID) }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fecha</span>
+            <span class="detalle-valor">{{ partidoVer.FechaPartido | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Estadio</span>
+            <span class="detalle-valor">{{ partidoVer.Estadio }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fase</span>
+            <span class="detalle-valor">
+              <span class="badge" [ngClass]="getFaseBadgeColor(partidoVer.Fase)">
+                {{ partidoVer.Fase }}
+              </span>
+            </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Goles Local</span>
+            <span class="detalle-valor">{{ partidoVer.GolesLocal ?? '—' }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Goles Visitante</span>
+            <span class="detalle-valor">{{ partidoVer.GolesVisitante ?? '—' }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Estado</span>
+            <span class="detalle-valor">
+              <span class="badge" [ngClass]="getEstadoBadge(partidoVer.Estado_Juego)">
+                {{ partidoVer.Estado_Juego }}
+              </span>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="partidoVer = null">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

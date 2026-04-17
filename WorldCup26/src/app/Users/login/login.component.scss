@@ -1,0 +1,140 @@
+
+header{
+        background-color: #1A1143;
+
+}
+.header {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header img{
+    border-radius: 8px;
+    width: 70px;
+}
+
+.login-container {
+  height: 87vh;
+  width: 100%;
+  background: url('/assets/messi.jpeg') center/cover no-repeat;
+  display: flex;
+  flex-direction: column;
+}
+
+
+
+.logo {
+  width: 40px;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px;
+}
+
+/* LEFT PANEL */
+
+.left-panel {
+  width: 45%;
+  color: white;
+}
+
+.title {
+  font-size: 60px;
+  font-weight: bold;
+}
+
+.match-info {
+  margin: 20px 0;
+  font-size: 18px;
+}
+
+/* CHART PLACEHOLDERS */
+
+.charts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.chart-box {
+  width: 280px;
+  height:135px;
+  position: relative;
+  background: rgba(0,0,0,0.5);
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.chart-box canvas{
+  width:88% !important;
+  height:100% !important;
+}
+
+
+
+/* PLAYER */
+
+.player {
+  position: absolute;
+  left: 40%;
+  bottom: 0;
+}
+
+.player img {
+  height: 400px;
+}
+
+/* LOGIN */
+
+.login-box {
+  width: 470px;
+  background: rgba(0,0,0,0.6);
+  padding: 30px;
+  border-radius: 10px;
+  color: white;
+}
+
+.login-box h2 {
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 15px;
+}
+
+.input-group label {
+  font-size: 12px;
+  opacity: .8;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 4px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 5px;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #7C0909;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+footer{
+    background-color: #1A1143;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding-top: 15px;
+}

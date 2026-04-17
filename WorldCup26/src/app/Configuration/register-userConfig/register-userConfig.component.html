@@ -1,0 +1,198 @@
+<body>
+
+  <header>
+
+  </header>
+  <main>
+    <div class="user-container">
+      <section>
+        <!-- FORMULARIO -->
+        <div class="form-section">
+          <h3>👤 Registro de Usuario</h3>
+
+          <form [formGroup]="form_resgiter_userConfig" (ngSubmit)="Onsumit()">
+
+            <div class="row">
+              <div class="col-md-6">
+                <label for="name">Nombre</label>
+                <input class="form-control" type="text" id="name" formControlName="txtnombre">
+              </div>
+
+              <div class="col-md-6">
+                <label for="pass">Password</label>
+                <input class="form-control" type="password" id="pass" formControlName="txtpass">
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label for="email">Email</label>
+                <input class="form-control" id="email" type="email" formControlName="txtemail">
+              </div>
+
+              <div class="col-md-6">
+                <label for="rol">Rol</label>
+                <select class="form-select" id="rol" type="text" formControlName="txtrol"
+                  aria-label="Default select example">
+                  <option selected>Seleccione</option>
+                  <option value="2">Administrador</option>
+                  <option value="1">Usurio</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn-success mt-3" type="submit">Registrar</button>
+
+          </form>
+        </div>
+      </section>
+      <section>
+        <!-- TABLA -->
+        <div class="table-section mt-4">
+
+          <h3>📋 Usuarios Registrados</h3>
+
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <!-- <th>Usuario</th> -->
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody>
+
+              <tr *ngFor="let user of users; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ user.Nombre }}</td>
+                <!-- <td>{{ user.u }}</td> -->
+                <td>{{ user.Email }}</td>
+                <td>{{ user.Rol }}</td>
+                <td class="actions">
+
+                  <button class="btn btn-info btn-sm" (click)="verUsuario(user)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+
+                  <!-- EDITAR -->
+                  <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    (click)="abrirModalEditar(user)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+
+
+
+                  <!-- ELIMINAR -->
+                  <button class="btn btn-danger btn-sm">
+                    <i class="bi bi-trash"></i>
+                  </button>
+
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+
+        </div>
+      </section>
+      <app-start></app-start>
+    </div>
+  </main>
+  <!-- MODAL -->
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Usuario</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="name">Nombre</label>
+            <input type="text" id="name" name="name" [(ngModel)]="resgiter_userConfig.Nombre" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" [(ngModel)]="resgiter_userConfig.Email" class="form-control">
+          </div>
+
+          <div class="col-mb-1">
+            <label for="rol">Rol</label>
+            <select [(ngModel)]="resgiter_userConfig.ROL" id="rol" name="rol" class="form-select"
+              aria-label="Default select example" #rol="ngModel">
+              <option value="null">Seleccione</option>
+              <option value="2">Administrador</option>
+              <option value="1">Usurio</option>
+            </select>
+            <!-- 🔥 Mensaje de error -->
+            <!-- <div *ngIf="rol.invalid && rol.touched" class="text-danger">
+              El rol es obligatorio
+            </div> -->
+          </div>
+
+          <div class="col-mb-1">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" [(ngModel)]="resgiter_userConfig.Password"
+              class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" (click)="guardarCambios()">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- MODAL VER USUARIO -->
+<div class="modal fade show d-block" *ngIf="usuarioVer" 
+  style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title">👤 Detalle del Usuario</h5>
+        <button type="button" class="btn-close btn-close-white" 
+          (click)="usuarioVer = null"></button>
+      </div>
+      <div class="modal-body">
+        <div class="detalle-row">
+          <span class="detalle-label">ID</span>
+          <span class="detalle-valor">{{ usuarioVer.ID }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Nombre</span>
+          <span class="detalle-valor">{{ usuarioVer.Nombre }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Email</span>
+          <span class="detalle-valor">{{ usuarioVer.Email }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Rol</span>
+          <span class="detalle-valor">{{ usuarioVer.Rol }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Fecha creación</span>
+          <span class="detalle-valor">
+            {{ usuarioVer.FECHA_CREACION || usuarioVer.FechaCreacion || 'No disponible' }}
+          </span>
+        </div>
+        <div class="detalle-row detalle-pass">
+          <i class="bi bi-lock-fill" style="color:#ffc107; margin-right:8px;"></i>
+          <span style="color:#aaa; font-size:0.85rem;">Contraseña protegida por seguridad</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="usuarioVer = null">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>

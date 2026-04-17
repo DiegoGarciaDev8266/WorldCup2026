@@ -1,0 +1,127 @@
+section {
+  width: 88%;
+  margin: auto;
+}
+
+.user-container {
+  padding: 20px;
+  color: white;
+}
+
+.form-section {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.table-section {
+  background: #111;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+// TABS
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: #111;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.tab-btn {
+  background: #2c2c4e;
+  color: #ccc;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+
+  &:hover { background: #3a3a5e; color: white; }
+  &.active {
+    background: #28a745;
+    color: white;
+    font-weight: bold;
+  }
+}
+
+// MARCADOR
+.marcador-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 24px;
+  background: #1a1a2e;
+  border-radius: 12px;
+  margin-top: 16px;
+}
+
+.equipo-marcador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.nombre-equipo {
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  color: white;
+}
+
+.goles-control {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.goles-numero {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffc107;
+  min-width: 50px;
+  text-align: center;
+}
+
+.vs-separador {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #666;
+}
+
+.partido-info {
+  display: flex;
+  gap: 20px;
+  color: #aaa;
+  font-size: 0.9rem;
+
+  span { display: flex; align-items: center; gap: 6px; }
+}
+
+// MARCADOR EN TABLA
+.marcador-tabla {
+  font-weight: bold;
+  padding: 3px 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+
+  &.victoria-local { background: rgba(40,167,69,0.2); color: #5ddb80; }
+  &.victoria-visitante { background: rgba(220,53,69,0.2); color: #f87e8a; }
+  &.empate { background: rgba(255,193,7,0.2); color: #ffc107; }
+}
+
+.fila-seleccionada td {
+  background: rgba(255, 193, 7, 0.1) !important;
+  border-left: 3px solid #ffc107;
+}
+
+// TABLA POSICIONES
+.clasificado td { border-left: 3px solid #28a745; }
+
+.actions button { margin-right: 5px; }

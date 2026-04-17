@@ -1,0 +1,116 @@
+header{
+        background-color: #1A1143;
+
+}
+.header {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header img{
+    border-radius: 8px;
+    width: 70px;
+}
+
+
+.page{
+height:83vh;
+background:url("/assets/fondo_regist.png") center/cover no-repeat;
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+/* TOP BAR */
+
+
+
+/* TITLE */
+
+h1{
+color:white;
+margin:30px 0;
+font-size:40px;
+font-weight:bold;
+}
+
+.container{
+    display: flex;
+    justify-content: center;
+}
+
+/* FORM BOX */
+
+.form-box{
+background:rgba(0,0,0,0.65);
+padding:25px;
+border-radius:15px;
+width:970px;
+display: flex;
+justify-content: center;
+}
+
+/* GRID */
+
+.form-grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+margin-bottom:20px;
+}
+
+.form-group{
+display:flex;
+flex-direction:column;
+grid-area: 20px;
+}
+
+label{
+color:white;
+margin-bottom:5px;
+font-size:14px;
+}
+
+input{
+padding:5px;
+border-radius:6px;
+border:none;
+width: 400px;
+
+}
+
+/* EMAIL */
+
+.email-group{
+display:flex;
+flex-direction:column;
+margin-bottom:20px;
+}
+
+/* BUTTON */
+
+.register-btn{
+display:block;
+// margin:auto;
+margin-right: 10px;
+margin-top: 30px;
+background:#7C0909;
+color:white;
+border:none;
+padding:10px 40px;
+border-radius:10px;
+cursor:pointer;
+font-weight:bold;
+}
+
+/* FOOTER */
+
+footer{
+    background-color: #1A1143;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    padding-top: 15px;
+}

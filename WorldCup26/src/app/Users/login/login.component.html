@@ -1,0 +1,92 @@
+<header>
+    <!-- HEADER -->
+    <div class="header">
+        <img src="assets/Logo.png" class="logo">
+    </div>
+</header>
+<main>
+
+    <div class="login-container">
+        <div class="content d-flex flex-wrap">
+
+            <!-- LEFT SIDE -->
+            <div class="left-panel  ">
+
+                <h1 class="title">WELCOME TO <br> WORLD CUP</h1>
+
+                <div class="match-info">
+                    <span>ARGENTINA VS GERMANY</span>
+                </div>
+
+                <!-- ESPACIO PARA GRAFICAS -->
+                <div class="charts flex-wrap">
+
+                    <div class="chart-box">
+                        <!-- Aqui irá grafica 1 -->
+                        <div class="chart-box">
+                            <canvas baseChart [data]="chartData" [type]="chartType" [options]="chartOptions">
+                            </canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <!-- Aqui irá grafica 2 -->
+                        <canvas baseChart [data]="radarChartData" [type]="radarChartType" [options]="chartOptions">
+                        </canvas>
+                    </div>
+
+                    <div class="chart-box">
+                        <!-- Aqui irá grafica 3 -->
+                        <canvas  baseChart [data]="doughnutChartData" [type]="doughnutChartType" [options]="chartOptions" >
+                        </canvas>
+                    </div>
+
+                    <div class="chart-box">
+                        <!-- Aqui irá grafica 4 -->
+                            <canvas baseChart [data]="lineChartData" [type]="lineChartType" [options]="chartOptions" >
+                        </canvas>
+                    </div>
+                </div>
+            </div>
+            <!-- PLAYER IMAGE -->
+            <!-- <div class="player">
+                <img src="assets/" alt="player">
+            </div> -->
+
+            <!-- LOGIN FORM -->
+            <div class="login-box">
+
+                <h2>Sign in</h2>
+
+                <form [formGroup]="form_login" (ngSubmit)="login()">
+
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input formControlName="txtemail" type="email" id="email" placeholder="Michael">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="pass">Password</label>
+                        <input formControlName="txtpass" type="password" id="pass" placeholder="Password">
+                    </div>
+
+                    <div class="input-group">
+                       <a href="" routerLink="/register-user">Not Registered? Click</a>
+                    </div>
+
+                    <button class="login-btn" type="submit">
+                        Sign in now
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</main>
+<footer>
+    <p>&copy; 2026 Fifa. Todos los derechos reservados.</p>
+
+</footer>
