@@ -34,10 +34,22 @@ export class GestionSeleccionesComponent implements OnInit {
   }
 
   get equiposFiltrados() {
-    return this.listaEquipos.filter(e =>
-      e.NombreEquipo.toLowerCase().includes(this.busqueda.toLowerCase()) ||
-      e.Grupo.toLowerCase().includes(this.busqueda.toLowerCase())
-    );
+  const busq = this.busqueda.toLowerCase().trim();
+  if (!busq) return this.listaEquipos;
+  
+  return this.listaEquipos.filter(e => {
+    const nombre = e.NombreEquipo.toLowerCase();
+    const grupo = e.Grupo.toLowerCase();
+    const grupoCompleto = ('grupo ' + e.Grupo).toLowerCase();
+    
+    // Si busca exactamente una letra, busca solo por grupo exacto
+    if (busq.length === 1) {
+      return grupo === busq;
+    }
+    
+    // Si busca más de una letra, busca por nombre o grupo completo
+    return nombre.includes(busq) || grupoCompleto.includes(busq);
+  });
   }
 
   onSubmit() {

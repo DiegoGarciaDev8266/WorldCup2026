@@ -122,6 +122,17 @@ section {
 }
 
 // TABLA POSICIONES
-.clasificado td { border-left: 3px solid #28a745; }
+.clasificado td { 
+  border-left: 3px solid #28a745;
+  color: white !important;
+}
 
+.form-section td,
+.table-section td {
+  color: white !important;
+}
 .actions button { margin-right: 5px; }
+
+.table-dark td {
+  color: white !important;
+}

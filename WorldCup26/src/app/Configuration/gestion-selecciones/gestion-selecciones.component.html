@@ -9,6 +9,7 @@
             <span class="badge bg-secondary ms-2">{{ listaEquipos.length }} / 48</span>
           </h3>
 
+          <!-- FILA 1: Nombre y Grupo -->
           <div class="row">
             <div class="col-md-6">
               <label>Nombre del Equipo</label>
@@ -24,23 +25,26 @@
             </div>
           </div>
 
+          <!-- FILA 2: URL, Preview y Estado -->
           <div class="row mt-2">
-            <div class="col-md-8">
+            <div class="col-md-6">
               <label>URL del Escudo</label>
               <input class="form-control" type="text" [(ngModel)]="equipo.EscudoURL"
                 placeholder="https://ejemplo.com/escudo.png"/>
             </div>
-            <div class="col-md-2 d-flex align-items-end">
-              <img *ngIf="equipo.EscudoURL" [src]="equipo.EscudoURL"
-                style="width:48px;height:48px;object-fit:contain;background:white;border-radius:6px;padding:3px"
-                alt="preview"/>
-            </div>
-            <div class="col-md-2">
+            <div class="col-md-3">
               <label>Estado</label>
               <select class="form-select" [(ngModel)]="equipo.Estado">
                 <option value="ACT">Activo</option>
                 <option value="INA">Inactivo</option>
               </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end justify-content-center">
+              <img *ngIf="equipo.EscudoURL" [src]="equipo.EscudoURL"
+                style="width:48px;height:48px;object-fit:contain;background:white;
+                border-radius:6px;padding:3px" alt="preview"/>
+              <span *ngIf="!equipo.EscudoURL" class="text-muted" 
+                style="font-size:0.8rem;">Vista previa</span>
             </div>
           </div>
 

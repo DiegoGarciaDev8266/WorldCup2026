@@ -31,7 +31,10 @@ export class GestionRolesComponent implements OnInit {
 
   cargarUsuarios() {
     this.conexionService.GetRoles().subscribe({
-      next: (data) => { this.listaUsuarios = data; },
+      next: (data) => {
+        console.log('datos roles:', data);
+        this.listaUsuarios = data;
+      },
       error: (err) => { this.toastr.error('❌ Error al cargar usuarios', err.error?.message); }
     });
   }

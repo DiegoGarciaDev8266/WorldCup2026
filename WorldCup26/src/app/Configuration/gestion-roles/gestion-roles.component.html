@@ -56,8 +56,10 @@
             <thead>
               <tr>
                 <th>#</th>
-                <th>Nombre Rol</th>
+                <th>Nombre</th>
                 <th>Email</th>
+                <th>Rol</th>
+                <th>Descripción</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -65,8 +67,10 @@
             <tbody>
               <tr *ngFor="let usuario of listaUsuarios; let i = index">
                 <td>{{ i + 1 }}</td>
-                <td>{{ usuario.NOMBRE_ROL }}</td>
+                <td>{{ usuario.NOMBRE }}</td>
                 <td>{{ usuario.EMAIL }}</td>
+                <td>{{ usuario.NOMBRE_ROL }}</td>
+                <td>{{ usuario.DESCRIPCION || '—' }}</td>
                 <td>
                   <span [class]="usuario.ESTADO === 'ACT' ? 'badge bg-success' : 'badge bg-danger'">
                     {{ usuario.ESTADO === 'ACT' ? 'Activo' : 'Inactivo' }}
@@ -85,6 +89,11 @@
                   </button>
                 </td>
               </tr>
+              <tr *ngIf="listaUsuarios.length === 0">
+                <td colspan="7" class="text-center text-muted py-4">
+                  No hay usuarios registrados
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -95,28 +104,57 @@
   </main>
 
   <!-- MODAL VER DETALLE -->
-  <div class="modal fade show d-block" *ngIf="mostrarModal" style="background:rgba(0,0,0,0.5)">
-    <div class="modal-dialog">
-      <div class="modal-content bg-dark text-white">
-        <div class="modal-header">
-          <h5 class="modal-title">Detalle del Usuario</h5>
-          <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+<div class="modal fade show d-block" *ngIf="mostrarModal"
+  style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
+  <div class="modal-dialog">
+    <div class="modal-content bg-dark text-white">
+      <div class="modal-header">
+        <h5 class="modal-title">⚙️ Detalle del Usuario</h5>
+        <button type="button" class="btn-close btn-close-white"
+          (click)="cerrarModal()"></button>
+      </div>
+      <div class="modal-body">
+        <div class="detalle-row">
+          <span class="detalle-label">ID</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.ID }}</span>
         </div>
-        <div class="modal-body">
-          <table class="table table-dark table-sm">
-            <tr><td><strong>ID</strong></td><td>{{ usuarioSeleccionado?.ID }}</td></tr>
-            <tr><td><strong>Nombre Rol</strong></td><td>{{ usuarioSeleccionado?.NOMBRE_ROL }}</td></tr>
-            <tr><td><strong>Descripción</strong></td><td>{{ usuarioSeleccionado?.DESCRIPCION }}</td></tr>
-            <tr><td><strong>Email</strong></td><td>{{ usuarioSeleccionado?.EMAIL }}</td></tr>
-            <tr><td><strong>Estado</strong></td><td>{{ usuarioSeleccionado?.ESTADO }}</td></tr>
-            <tr><td><strong>Creado por</strong></td><td>{{ usuarioSeleccionado?.USUARIO_CREACION }}</td></tr>
-            <tr><td><strong>Fecha</strong></td><td>{{ usuarioSeleccionado?.FECHA_CREACION }}</td></tr>
-          </table>
+        <div class="detalle-row">
+          <span class="detalle-label">Nombre</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.NOMBRE }}</span>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+        <div class="detalle-row">
+          <span class="detalle-label">Email</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.EMAIL }}</span>
         </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Nombre Rol</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.NOMBRE_ROL }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Descripción</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.DESCRIPCION || 'Sin descripción' }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Estado</span>
+          <span class="detalle-valor">
+            <span [class]="usuarioSeleccionado?.ESTADO === 'ACT' ? 'badge bg-success' : 'badge bg-danger'">
+              {{ usuarioSeleccionado?.ESTADO === 'ACT' ? 'Activo' : 'Inactivo' }}
+            </span>
+          </span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Creado por</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.USUARIO_CREACION }}</span>
+        </div>
+        <div class="detalle-row">
+          <span class="detalle-label">Fecha creación</span>
+          <span class="detalle-valor">{{ usuarioSeleccionado?.FECHA_CREACION | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
       </div>
     </div>
   </div>
+</div>
 </body>

@@ -1,5 +1,6 @@
 export interface GestionRolesMoldel {
   ID?: number;
+  NOMBRE?: string;
   NOMBRE_ROL: string;
   DESCRIPCION: string;
   ESTADO: string;

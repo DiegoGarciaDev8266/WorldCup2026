@@ -26,28 +26,3 @@
    module.exports = {sql, conectarDB};
 
 
-// const sql = require("mssql");
-
-// const conexion = {
-//   server: "localhost", // 👈 NO uses JEI-LC\\SQLEXPRESS aquí
-//   database: "NexusWorldCup26",
-//   user: "Nexus",
-//   password: "Nexus06",
-//   options: {
-//     instanceName: "SQLEXPRESS", // 👈 ESTO es la clave
-//     encrypt: false,
-//     trustServerCertificate: true,
-//   },
-//   port: 1433, // opcional pero ayuda
-// };
-
-// async function conectarDB() {
-//   try {
-//     await sql.connect(conexion);
-//     console.log("✅ Conectado a SQL Server");
-//   } catch (err) {
-//     console.error("❌ Error de conexión", err);
-//   }
-// }
-
-//   module.exports = {sql, conectarDB};
