@@ -1,0 +1,569 @@
+<body>
+  <main>
+    <div class="user-container">
+      <section>
+
+        <!-- TABS -->
+        <div class="tabs-container">
+          <button class="tab-btn"
+            [class.active]="vistaActiva === 'partidos'"
+            (click)="vistaActiva = 'partidos'">
+            📅 Programar Partidos
+          </button>
+          <button class="tab-btn"
+            [class.active]="vistaActiva === 'resultados'"
+            (click)="vistaActiva = 'resultados'">
+            ⚽ Gestión de Resultados
+          </button>
+        </div>
+
+        <!-- ==================== VISTA PARTIDOS ==================== -->
+        <div *ngIf="vistaActiva === 'partidos'">
+
+          <div class="form-section">
+            <h3>📅 {{ modoEdicion ? 'Editar Partido' : 'Programar Partido' }}</h3>
+
+            <div class="row">
+              <div class="col-md-6">
+                <label>Equipo Local</label>
+                <select class="form-select" [(ngModel)]="partido.EquipoLocalID">
+                  <option [value]="0" disabled>Selecciona equipo local</option>
+                  <option *ngFor="let e of listaEquipos" [value]="e.EquipoID"
+                    [disabled]="e.EquipoID === partido.EquipoVisitanteID">
+                    {{ e.NombreEquipo }}
+                  </option>
+                </select>
+                <small *ngIf="listaEquipos.length === 0" class="text-warning">
+                  ⚠️ No hay equipos registrados aún
+                </small>
+              </div>
+              <div class="col-md-6">
+                <label>Equipo Visitante</label>
+                <select class="form-select" [(ngModel)]="partido.EquipoVisitanteID">
+                  <option [value]="0" disabled>Selecciona equipo visitante</option>
+                  <option *ngFor="let e of listaEquipos" [value]="e.EquipoID"
+                    [disabled]="e.EquipoID === partido.EquipoLocalID">
+                    {{ e.NombreEquipo }}
+                  </option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label>Fecha y Hora</label>
+                <input class="form-control" type="datetime-local"
+                  [(ngModel)]="partido.FechaPartido"/>
+              </div>
+              <div class="col-md-6">
+                <label>Estadio</label>
+                <input class="form-control" type="text"
+                  [(ngModel)]="partido.Estadio" placeholder="Ej: Estadio Azteca"/>
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label>Fase</label>
+                <select class="form-select" [(ngModel)]="partido.Fase">
+                  <option value="" disabled>Selecciona la fase</option>
+                  <optgroup label="— Fase de Grupos —">
+                    <option *ngFor="let g of fasesGrupo" [value]="'Grupo ' + g">
+                      Grupo {{ g }}
+                    </option>
+                  </optgroup>
+                  <optgroup label="— Eliminación Directa —">
+                    <option *ngFor="let f of fasesEliminacion" [value]="f">
+                      {{ f }}
+                    </option>
+                  </optgroup>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label>Estado del Juego</label>
+                <select class="form-select" [(ngModel)]="partido.Estado_Juego">
+                  <option *ngFor="let e of estadosJuego" [value]="e">{{ e }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+              <button class="btn btn-success" (click)="onSubmit()">
+                {{ modoEdicion ? '💾 Actualizar' : '➕ Registrar Partido' }}
+              </button>
+              <button class="btn btn-secondary" *ngIf="modoEdicion" (click)="cancelar()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLA PARTIDOS -->
+          <div class="table-section mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+              <h3>🗓️ Partidos Programados
+                <span class="badge bg-secondary ms-2">{{ listaPartidos.length }}</span>
+              </h3>
+              <input class="form-control w-25" [(ngModel)]="filtroFase"
+                placeholder="🔍 Filtrar por fase..."/>
+            </div>
+
+            <table class="table table-dark table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Local</th>
+                  <th>Visitante</th>
+                  <th>Fecha</th>
+                  <th>Estadio</th>
+                  <th>Fase</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of partidosFiltrados; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td><strong>{{ p.NombreLocal || getNombreEquipo(p.EquipoLocalID) }}</strong></td>
+                  <td><strong>{{ p.NombreVisitante || getNombreEquipo(p.EquipoVisitanteID) }}</strong></td>
+                  <td>{{ p.FechaPartido | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ p.Estadio }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getFaseBadgeColor(p.Fase)">
+                      {{ p.Fase }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge" [ngClass]="getEstadoBadge(p.Estado_Juego)">
+                      {{ p.Estado_Juego }}
+                    </span>
+                  </td>
+                  <td class="actions">
+                    <button class="btn btn-info btn-sm" (click)="verPartido(p)"
+                      title="Ver detalles">
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button class="btn btn-warning btn-sm" (click)="editarPartido(p)"
+                      title="Editar">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" (click)="abrirModalEliminar(p)"
+                      title="Eliminar">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="partidosFiltrados.length === 0">
+                  <td colspan="8" class="text-center text-muted py-4">
+                    No hay partidos programados
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ==================== VISTA RESULTADOS ==================== -->
+        <div *ngIf="vistaActiva === 'resultados'">
+
+          <!-- FORMULARIO CORRECCIÓN -->
+          <div class="form-section" *ngIf="partidoSeleccionado">
+            <div class="correccion-header">
+              <h3>✏️ Corregir Resultado</h3>
+              <span class="correccion-aviso">
+                <i class="bi bi-exclamation-triangle-fill text-warning"></i>
+                Esta acción modifica el resultado oficial del partido
+              </span>
+            </div>
+
+            <div class="marcador-box">
+              <div class="equipo-marcador">
+                <img *ngIf="partidoSeleccionado.EscudoLocal"
+                  [src]="partidoSeleccionado.EscudoLocal"
+                  class="escudo-marcador"/>
+                <span class="nombre-equipo">{{ partidoSeleccionado.NombreLocal }}</span>
+                <div class="goles-control">
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesLocal = golesLocal > 0 ? golesLocal - 1 : 0">−</button>
+                  <span class="goles-numero">{{ golesLocal }}</span>
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesLocal = golesLocal + 1">+</button>
+                </div>
+              </div>
+
+              <div class="vs-separador">VS</div>
+
+              <div class="equipo-marcador">
+                <img *ngIf="partidoSeleccionado.EscudoVisitante"
+                  [src]="partidoSeleccionado.EscudoVisitante"
+                  class="escudo-marcador"/>
+                <span class="nombre-equipo">{{ partidoSeleccionado.NombreVisitante }}</span>
+                <div class="goles-control">
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesVisitante = golesVisitante > 0 ? golesVisitante - 1 : 0">−</button>
+                  <span class="goles-numero">{{ golesVisitante }}</span>
+                  <button class="btn btn-outline-light btn-sm"
+                    (click)="golesVisitante = golesVisitante + 1">+</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="partido-info mt-3">
+              <span>
+                <i class="bi bi-calendar"></i>
+                {{ partidoSeleccionado.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+              </span>
+              <span *ngIf="partidoSeleccionado.Estadio">
+                <i class="bi bi-geo-alt"></i> {{ partidoSeleccionado.Estadio }}
+              </span>
+              <span>
+                <i class="bi bi-flag"></i> {{ partidoSeleccionado.Fase }}
+              </span>
+            </div>
+
+            <div class="mt-3 d-flex gap-2">
+              <button class="btn btn-success" (click)="registrarResultado()">
+                💾 Guardar Corrección
+              </button>
+              <button class="btn btn-secondary" (click)="cancelarSeleccion()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+
+          <!-- TABLA PARTIDOS FINALIZADOS -->
+          <div class="table-section" [class.mt-4]="partidoSeleccionado">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h3>✅ Partidos Finalizados
+                <span class="badge bg-secondary ms-2">
+                  {{ listaPartidosFinalizados.length }}
+                </span>
+              </h3>
+            </div>
+
+            <table class="table table-dark table-hover">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Local</th>
+                  <th class="text-center">Resultado</th>
+                  <th>Visitante</th>
+                  <th>Fecha</th>
+                  <th>Fase</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let p of listaPartidosFinalizados; let i = index"
+                  [class.fila-seleccionada]="partidoSeleccionado?.PartidoID === p.PartidoID">
+                  <td>{{ i + 1 }}</td>
+                  <td>
+                    <strong>{{ p.NombreLocal }}</strong>
+                  </td>
+                  <td class="text-center">
+                    <span *ngIf="p.GolesLocal !== null"
+                      class="marcador-tabla" [ngClass]="getResultadoBadge(p)">
+                      {{ p.GolesLocal }} - {{ p.GolesVisitante }}
+                    </span>
+                    <span *ngIf="p.GolesLocal === null" class="text-muted">
+                      Sin resultado
+                    </span>
+                  </td>
+                  <td>
+                    <strong>{{ p.NombreVisitante }}</strong>
+                  </td>
+                  <td>{{ p.FechaPartido | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getFaseBadgeColor(p.Fase)">
+                      {{ p.Fase }}
+                    </span>
+                  </td>
+                  <td class="actions">
+                    <button class="btn btn-info btn-sm"
+                      (click)="verEstadisticas(p)"
+                      title="Ver estadísticas">
+                      <i class="bi bi-bar-chart-fill"></i>
+                    </button>
+                    <button class="btn btn-warning btn-sm"
+                      (click)="seleccionarPartido(p)"
+                      title="Corregir resultado">
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </td>
+                </tr>
+                <tr *ngIf="listaPartidosFinalizados.length === 0">
+                  <td colspan="7" class="text-center text-muted py-4">
+                    No hay partidos finalizados
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+      <app-start></app-start>
+    </div>
+  </main>
+
+  <!-- MODAL VER PARTIDO -->
+  <div class="modal fade show d-block" *ngIf="partidoVer"
+    style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">📋 Detalle del Partido</h5>
+          <button type="button" class="btn-close btn-close-white"
+            (click)="partidoVer = null"></button>
+        </div>
+        <div class="modal-body">
+          <div class="detalle-row">
+            <span class="detalle-label">Equipo Local</span>
+            <span class="detalle-valor">
+              {{ partidoVer.NombreLocal || getNombreEquipo(partidoVer.EquipoLocalID) }}
+            </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Equipo Visitante</span>
+            <span class="detalle-valor">
+              {{ partidoVer.NombreVisitante || getNombreEquipo(partidoVer.EquipoVisitanteID) }}
+            </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fecha</span>
+            <span class="detalle-valor">
+              {{ partidoVer.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Estadio</span>
+            <span class="detalle-valor">{{ partidoVer.Estadio || '—' }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fase</span>
+            <span class="detalle-valor">
+              <span class="badge" [ngClass]="getFaseBadgeColor(partidoVer.Fase)">
+                {{ partidoVer.Fase }}
+              </span>
+            </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Marcador</span>
+            <span class="detalle-valor">
+              {{ partidoVer.GolesLocal ?? '—' }} - {{ partidoVer.GolesVisitante ?? '—' }}
+            </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Estado</span>
+            <span class="detalle-valor">
+              <span class="badge" [ngClass]="getEstadoBadge(partidoVer.Estado_Juego)">
+                {{ partidoVer.Estado_Juego }}
+              </span>
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="partidoVer = null">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR ELIMINAR PARTIDO -->
+  <div class="modal fade show d-block" *ngIf="partidoAEliminar"
+    style="background:rgba(0,0,0,0.6); position:fixed; inset:0; z-index:1060;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white"
+        style="border:1px solid rgba(233,69,96,0.3); border-radius:14px;">
+        <div class="modal-header"
+          style="border-bottom:1px solid rgba(255,255,255,0.08);">
+          <h5 class="modal-title">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+            Confirmar eliminación
+          </h5>
+          <button type="button" class="btn-close btn-close-white"
+            (click)="partidoAEliminar = null"></button>
+        </div>
+        <div class="modal-body text-center py-4">
+          <div style="font-size:3rem; margin-bottom:12px;">🗑️</div>
+          <p style="font-size:1rem; margin-bottom:6px;">
+            ¿Eliminar el siguiente partido?
+          </p>
+          <p style="color:#00c6ff; font-weight:700; font-size:1.1rem;">
+            {{ partidoAEliminar?.NombreLocal || getNombreEquipo(partidoAEliminar?.EquipoLocalID) }}
+            vs
+            {{ partidoAEliminar?.NombreVisitante || getNombreEquipo(partidoAEliminar?.EquipoVisitanteID) }}
+          </p>
+          <p style="color:rgba(255,255,255,0.4); font-size:0.85rem;">
+            {{ partidoAEliminar?.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+            — {{ partidoAEliminar?.Fase }}
+          </p>
+          <small style="color:#f87e8a;">
+            Esta acción no se puede deshacer.
+          </small>
+        </div>
+        <div class="modal-footer"
+          style="border-top:1px solid rgba(255,255,255,0.08);">
+          <button class="btn btn-secondary" (click)="partidoAEliminar = null">
+            Cancelar
+          </button>
+          <button class="btn btn-danger" (click)="confirmarEliminar()">
+            <i class="bi bi-trash me-1"></i> Sí, eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ESTADÍSTICAS DEL PARTIDO -->
+  <div class="modal-detalle" *ngIf="partidoEstadisticas"
+    (click)="cerrarEstadisticas()">
+    <div class="modal-detalle-content" (click)="$event.stopPropagation()">
+
+      <div class="md-header">
+        <div class="md-titulo">
+          <h3>📊 Estadísticas del Partido</h3>
+          <span class="md-fase">{{ partidoEstadisticas.Fase }}</span>
+        </div>
+        <button class="md-close" (click)="cerrarEstadisticas()">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <!-- MARCADOR -->
+      <div class="md-marcador">
+        <div class="md-equipo">
+          <img *ngIf="partidoEstadisticas.EscudoLocal"
+            [src]="partidoEstadisticas.EscudoLocal" class="md-escudo"/>
+          <div class="md-escudo-placeholder" *ngIf="!partidoEstadisticas.EscudoLocal">
+            <i class="bi bi-shield-fill"></i>
+          </div>
+          <span class="md-nombre">{{ partidoEstadisticas.NombreLocal }}</span>
+        </div>
+
+        <div class="md-resultado">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <span class="md-gol">{{ partidoEstadisticas.GolesLocal }}</span>
+            <span class="md-sep">-</span>
+            <span class="md-gol">{{ partidoEstadisticas.GolesVisitante }}</span>
+          </div>
+          <span class="md-estado">Finalizado</span>
+        </div>
+
+        <div class="md-equipo">
+          <img *ngIf="partidoEstadisticas.EscudoVisitante"
+            [src]="partidoEstadisticas.EscudoVisitante" class="md-escudo"/>
+          <div class="md-escudo-placeholder" *ngIf="!partidoEstadisticas.EscudoVisitante">
+            <i class="bi bi-shield-fill"></i>
+          </div>
+          <span class="md-nombre">{{ partidoEstadisticas.NombreVisitante }}</span>
+        </div>
+      </div>
+
+      <div class="md-loading" *ngIf="cargandoDetalle">
+        <div class="spinner-sm"></div>
+        <span>Cargando estadísticas...</span>
+      </div>
+
+      <div *ngIf="!cargandoDetalle">
+
+        <!-- ESTADÍSTICAS -->
+        <div class="md-stats" *ngIf="estadisticasDetalle.length > 0">
+          <h4>📈 Estadísticas</h4>
+
+          <!-- POSESIÓN -->
+          <div class="posesion-box" *ngIf="getLocal() && getVisitante()">
+            <div class="posesion-barra">
+              <div class="posesion-local"
+                [style.width.%]="getLocal()?.Posesion || 50">
+                {{ getLocal()?.Posesion || 50 }}%
+              </div>
+              <div class="posesion-visitante"
+                [style.width.%]="getVisitante()?.Posesion || 50">
+                {{ getVisitante()?.Posesion || 50 }}%
+              </div>
+            </div>
+            <div class="posesion-labels">
+              <span>{{ getLocal()?.NombreEquipo }}</span>
+              <span class="posesion-titulo">Posesión</span>
+              <span>{{ getVisitante()?.NombreEquipo }}</span>
+            </div>
+          </div>
+
+          <div *ngIf="getLocal() && getVisitante()">
+            <ng-container *ngFor="let stat of [
+              { label: 'Goles esperados (xG)', campo: 'GolesEsperados', decimal: true },
+              { label: 'Grandes ocasiones', campo: 'GrandesOcasiones' },
+              { label: 'Tiros totales', campo: 'Tiros' },
+              { label: 'Tiros al arco', campo: 'TirosAlArco' },
+              { label: 'Tiros fuera', campo: 'TirosFuera' },
+              { label: 'Atajadas', campo: 'Atajadas' },
+              { label: 'Corners', campo: 'Corners' },
+              { label: 'Faltas', campo: 'Faltas' },
+              { label: 'Fuera de juego', campo: 'Offsides' },
+              { label: 'Despejes', campo: 'Despejes' },
+              { label: 'Intercepciones', campo: 'Intercepciones' },
+              { label: 'Tarjetas 🟨', campo: 'TarjetasAmarillas' },
+              { label: 'Tarjetas 🟥', campo: 'TarjetasRojas' },
+              { label: 'Penaltis', campo: 'Penaltis' }
+            ]">
+              <div class="stat-linea">
+                <span class="stat-val-local">
+                  {{ stat.decimal ?
+                    (getLocal()[stat.campo] | number:'1.2-2') :
+                    getLocal()[stat.campo] }}
+                </span>
+                <div class="stat-barra-container">
+                  <div class="stat-barra-local"
+                    [style.width.%]="getLocal()[stat.campo] + getVisitante()[stat.campo] > 0
+                      ? (getLocal()[stat.campo] / (getLocal()[stat.campo] + getVisitante()[stat.campo])) * 100
+                      : 50">
+                  </div>
+                </div>
+                <span class="stat-label-center">{{ stat.label }}</span>
+                <div class="stat-barra-container">
+                  <div class="stat-barra-visitante"
+                    [style.width.%]="getLocal()[stat.campo] + getVisitante()[stat.campo] > 0
+                      ? (getVisitante()[stat.campo] / (getLocal()[stat.campo] + getVisitante()[stat.campo])) * 100
+                      : 50">
+                  </div>
+                </div>
+                <span class="stat-val-visitante">
+                  {{ stat.decimal ?
+                    (getVisitante()[stat.campo] | number:'1.2-2') :
+                    getVisitante()[stat.campo] }}
+                </span>
+              </div>
+            </ng-container>
+          </div>
+
+          <div class="sin-stats" *ngIf="!getLocal() || !getVisitante()">
+            No hay estadísticas disponibles para este partido
+          </div>
+        </div>
+
+        <!-- EVENTOS -->
+        <div class="md-eventos" *ngIf="eventosDetalle.length > 0">
+          <h4>📋 Eventos del Partido</h4>
+          <div class="md-eventos-lista">
+            <div *ngFor="let ev of eventosDetalle" class="md-evento-item">
+              <span class="md-ev-minuto">{{ ev.Minuto }}'</span>
+              <span class="md-ev-icono">{{ getIconoEvento(ev.TipoEvento) }}</span>
+              <div class="md-ev-info">
+                <span class="md-ev-equipo" *ngIf="ev.Equipo">{{ ev.Equipo }}</span>
+                <span class="md-ev-desc">{{ ev.Descripcion }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sin-datos-modal"
+          *ngIf="estadisticasDetalle.length === 0 && eventosDetalle.length === 0">
+          <i class="bi bi-info-circle"></i>
+          <span>No hay estadísticas disponibles para este partido</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</body>

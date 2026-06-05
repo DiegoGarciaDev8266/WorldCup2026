@@ -1,0 +1,343 @@
+<div class="cp-container">
+
+  <!-- HEADER -->
+  <div class="cp-header">
+    <div class="cp-header-left">
+      <img src="assets/Logo.png" alt="Logo" class="cp-logo"/>
+      <div>
+        <h2>Consulta de Partidos</h2>
+        <span class="cp-subtitle">FIFA World Cup 2026</span>
+      </div>
+    </div>
+    <div class="cp-badge">
+      🗓️ {{ partidos.length }} partidos en total
+    </div>
+  </div>
+
+  <!-- CARDS RESUMEN -->
+  <div class="resumen-cards">
+    <div class="resumen-card" (click)="vistaActiva = 'todos'"
+      [class.activo]="vistaActiva === 'todos'">
+      <span class="resumen-num">{{ partidos.length }}</span>
+      <span class="resumen-label">Total</span>
+    </div>
+    <div class="resumen-card card-finalizado" (click)="vistaActiva = 'finalizados'"
+      [class.activo]="vistaActiva === 'finalizados'">
+      <span class="resumen-num">{{ totalFinalizados }}</span>
+      <span class="resumen-label">Finalizados</span>
+    </div>
+    <div class="resumen-card card-programado" (click)="vistaActiva = 'proximos'"
+      [class.activo]="vistaActiva === 'proximos'">
+      <span class="resumen-num">{{ totalProgramados }}</span>
+      <span class="resumen-label">Próximos</span>
+    </div>
+    <div class="resumen-card card-en-curso">
+      <span class="resumen-num">{{ totalEnCurso }}</span>
+      <span class="resumen-label">En curso</span>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="filtros-box">
+    <div class="filtro-item">
+      <i class="bi bi-search"></i>
+      <input type="text" [(ngModel)]="filtroEquipo"
+        placeholder="Buscar equipo..."/>
+    </div>
+    <div class="filtro-item">
+      <i class="bi bi-flag"></i>
+      <select [(ngModel)]="filtroFase">
+        <option value="">Todas las fases</option>
+        <optgroup label="Fase de Grupos">
+          <option *ngFor="let g of fasesGrupo" [value]="'Grupo ' + g">
+            Grupo {{ g }}
+          </option>
+        </optgroup>
+        <optgroup label="Eliminación Directa">
+          <option *ngFor="let f of fasesEliminacion" [value]="f">
+            {{ f }}
+          </option>
+        </optgroup>
+      </select>
+    </div>
+    <div class="filtro-item">
+      <i class="bi bi-circle"></i>
+      <select [(ngModel)]="filtroEstado">
+        <option value="">Todos los estados</option>
+        <option *ngFor="let e of estados" [value]="e">{{ e }}</option>
+      </select>
+    </div>
+    <button class="btn-limpiar" (click)="limpiarFiltros()"
+      *ngIf="filtroFase || filtroEstado || filtroEquipo">
+      <i class="bi bi-x-circle"></i> Limpiar filtros
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div class="cp-loading" *ngIf="cargando">
+    <div class="spinner"></div>
+    <span>Cargando partidos...</span>
+  </div>
+
+  <!-- LISTA DE PARTIDOS -->
+  <div *ngIf="!cargando">
+
+    <div class="resultados-header">
+      <span class="resultados-count">
+        {{ partidosFiltrados.length }} partido(s) encontrados
+      </span>
+    </div>
+
+    <div class="partidos-lista">
+      <div *ngFor="let p of partidosFiltrados" class="partido-card">
+
+        <!-- FASE Y FECHA -->
+        <div class="partido-meta">
+          <span class="fase-badge" [ngClass]="getFaseBadge(p.Fase)">
+            {{ p.Fase }}
+          </span>
+          <span class="partido-fecha">
+            <i class="bi bi-calendar3"></i>
+            {{ p.FechaPartido | date:'dd MMM yyyy · HH:mm' }}
+          </span>
+          <span class="partido-estadio">
+            <i class="bi bi-geo-alt"></i>
+            {{ p.Estadio || 'Por definir' }}
+          </span>
+        </div>
+
+        <!-- MARCADOR -->
+        <div class="partido-marcador">
+
+          <!-- EQUIPO LOCAL -->
+          <div class="equipo" [class.ganador]="p.GolesLocal > p.GolesVisitante">
+            <img *ngIf="p.EscudoLocal" [src]="p.EscudoLocal"
+              [alt]="p.NombreLocal" class="equipo-escudo"/>
+            <div class="equipo-escudo-placeholder" *ngIf="!p.EscudoLocal">
+              <i class="bi bi-shield-fill"></i>
+            </div>
+            <span class="equipo-nombre">{{ p.NombreLocal }}</span>
+          </div>
+
+          <!-- RESULTADO -->
+          <div class="marcador-centro">
+            <div *ngIf="p.Estado_Juego === 'Finalizado'" class="marcador-resultado">
+              <span class="gol" [class.gol-ganador]="p.GolesLocal > p.GolesVisitante">
+                {{ p.GolesLocal }}
+              </span>
+              <span class="marcador-sep">-</span>
+              <span class="gol" [class.gol-ganador]="p.GolesVisitante > p.GolesLocal">
+                {{ p.GolesVisitante }}
+              </span>
+            </div>
+
+            <!-- BOTÓN VER DETALLES — solo partidos finalizados -->
+          <div class="partido-acciones" *ngIf="p.Estado_Juego === 'Finalizado'">
+            <button class="btn-detalles" (click)="verDetalles(p)">
+              <i class="bi bi-bar-chart-fill"></i> Ver detalles
+            </button>
+          </div>
+
+            <div *ngIf="p.Estado_Juego === 'En curso'" class="marcador-vivo">
+              <span class="dot-vivo"></span>
+              EN VIVO
+            </div>
+            <div *ngIf="p.Estado_Juego === 'Programado'" class="marcador-vs">
+              VS
+            </div>
+            <div *ngIf="p.Estado_Juego === 'Suspendido'" class="marcador-suspendido">
+              SUSP.
+            </div>
+            <span class="estado-badge" [ngClass]="getEstadoBadge(p.Estado_Juego)">
+              {{ p.Estado_Juego }}
+            </span>
+          </div>
+
+          <!-- EQUIPO VISITANTE -->
+          <div class="equipo equipo-visitante"
+            [class.ganador]="p.GolesVisitante > p.GolesLocal">
+            <img *ngIf="p.EscudoVisitante" [src]="p.EscudoVisitante"
+              [alt]="p.NombreVisitante" class="equipo-escudo"/>
+            <div class="equipo-escudo-placeholder" *ngIf="!p.EscudoVisitante">
+              <i class="bi bi-shield-fill"></i>
+            </div>
+            <span class="equipo-nombre">{{ p.NombreVisitante }}</span>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- SIN RESULTADOS -->
+      <div class="sin-partidos" *ngIf="partidosFiltrados.length === 0">
+        <i class="bi bi-calendar-x" style="font-size:3rem; color:rgba(255,255,255,0.1)"></i>
+        <p>No se encontraron partidos</p>
+        <button class="btn-limpiar" (click)="limpiarFiltros()">
+          Limpiar filtros
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MODAL DETALLES DEL PARTIDO -->
+<div class="modal-detalle" *ngIf="partidoDetalle"
+  (click)="cerrarDetalle()">
+  <div class="modal-detalle-content" (click)="$event.stopPropagation()">
+
+    <!-- HEADER -->
+    <div class="md-header">
+      <div class="md-titulo">
+        <h3>📊 Detalles del Partido</h3>
+        <span class="md-fase">{{ partidoDetalle.Fase }}</span>
+      </div>
+      <button class="md-close" (click)="cerrarDetalle()">
+        <i class="bi bi-x-lg"></i>
+      </button>
+    </div>
+
+    <!-- MARCADOR FINAL -->
+    <div class="md-marcador">
+      <div class="md-equipo">
+        <img *ngIf="partidoDetalle.EscudoLocal"
+          [src]="partidoDetalle.EscudoLocal" class="md-escudo"/>
+        <div class="md-escudo-placeholder" *ngIf="!partidoDetalle.EscudoLocal">
+          <i class="bi bi-shield-fill"></i>
+        </div>
+        <span class="md-nombre">{{ partidoDetalle.NombreLocal }}</span>
+      </div>
+
+      <div class="md-resultado">
+        <span class="md-gol">{{ partidoDetalle.GolesLocal }}</span>
+        <span class="md-sep">-</span>
+        <span class="md-gol">{{ partidoDetalle.GolesVisitante }}</span>
+        <span class="md-estado">Finalizado</span>
+      </div>
+
+      <div class="md-equipo">
+        <img *ngIf="partidoDetalle.EscudoVisitante"
+          [src]="partidoDetalle.EscudoVisitante" class="md-escudo"/>
+        <div class="md-escudo-placeholder" *ngIf="!partidoDetalle.EscudoVisitante">
+          <i class="bi bi-shield-fill"></i>
+        </div>
+        <span class="md-nombre">{{ partidoDetalle.NombreVisitante }}</span>
+      </div>
+    </div>
+
+    <!-- INFO META -->
+    <div class="md-meta">
+      <span><i class="bi bi-calendar3"></i>
+        {{ partidoDetalle.FechaPartido | date:'dd MMM yyyy · HH:mm' }}
+      </span>
+      <span *ngIf="partidoDetalle.Estadio">
+        <i class="bi bi-geo-alt"></i> {{ partidoDetalle.Estadio }}
+      </span>
+    </div>
+
+    <div class="md-loading" *ngIf="cargandoDetalle">
+      <div class="spinner-sm"></div>
+      <span>Cargando detalles...</span>
+    </div>
+
+    <div *ngIf="!cargandoDetalle">
+
+      <!-- ESTADÍSTICAS -->
+      <div class="md-stats" *ngIf="estadisticasDetalle.length > 0">
+        <h4>📈 Estadísticas</h4>
+
+        <!-- POSESIÓN -->
+        <div class="posesion-box" *ngIf="getLocal() && getVisitante()">
+          <div class="posesion-barra">
+            <div class="posesion-local"
+              [style.width.%]="getLocal().Posesion || 50">
+              {{ getLocal().Posesion || 50 }}%
+            </div>
+            <div class="posesion-visitante"
+              [style.width.%]="getVisitante().Posesion || 50">
+              {{ getVisitante().Posesion || 50 }}%
+            </div>
+          </div>
+          <div class="posesion-labels">
+            <span>{{ getLocal()?.NombreEquipo }}</span>
+            <span class="posesion-titulo">Posesión</span>
+            <span>{{ getVisitante()?.NombreEquipo }}</span>
+          </div>
+        </div>
+
+        <div class="stat-row" *ngIf="getLocal() && getVisitante()">
+          <ng-container *ngFor="let stat of [
+            { label: 'Goles esperados (xG)', campo: 'GolesEsperados', decimal: true },
+            { label: 'Grandes ocasiones', campo: 'GrandesOcasiones' },
+            { label: 'Tiros totales', campo: 'Tiros' },
+            { label: 'Tiros al arco', campo: 'TirosAlArco' },
+            { label: 'Tiros fuera', campo: 'TirosFuera' },
+            { label: 'Atajadas', campo: 'Atajadas' },
+            { label: 'Corners', campo: 'Corners' },
+            { label: 'Faltas', campo: 'Faltas' },
+            { label: 'Fuera de juego', campo: 'Offsides' },
+            { label: 'Despejes', campo: 'Despejes' },
+            { label: 'Intercepciones', campo: 'Intercepciones' },
+            { label: 'Tarjetas 🟨', campo: 'TarjetasAmarillas' },
+            { label: 'Tarjetas 🟥', campo: 'TarjetasRojas' },
+            { label: 'Penaltis', campo: 'Penaltis' }
+          ]">
+            <div class="stat-linea">
+              <span class="stat-val-local">
+                {{ stat.decimal ?
+                  (getLocal()[stat.campo] | number:'1.2-2') :
+                  getLocal()[stat.campo] }}
+              </span>
+              <div class="stat-barra-container">
+                <div class="stat-barra-local"
+                  [style.width.%]="getLocal()[stat.campo] + getVisitante()[stat.campo] > 0
+                    ? (getLocal()[stat.campo] / (getLocal()[stat.campo] + getVisitante()[stat.campo])) * 100
+                    : 50">
+                </div>
+              </div>
+              <span class="stat-label-center">{{ stat.label }}</span>
+              <div class="stat-barra-container">
+                <div class="stat-barra-visitante"
+                  [style.width.%]="getLocal()[stat.campo] + getVisitante()[stat.campo] > 0
+                    ? (getVisitante()[stat.campo] / (getLocal()[stat.campo] + getVisitante()[stat.campo])) * 100
+                    : 50">
+                </div>
+              </div>
+              <span class="stat-val-visitante">
+                {{ stat.decimal ?
+                  (getVisitante()[stat.campo] | number:'1.2-2') :
+                  getVisitante()[stat.campo] }}
+              </span>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- EVENTOS -->
+      <div class="md-eventos" *ngIf="eventosDetalle.length > 0">
+        <h4>📋 Eventos del Partido</h4>
+        <div class="md-eventos-lista">
+          <div *ngFor="let ev of eventosDetalle"
+            class="md-evento-item"
+            [ngClass]="getClaseEvento(ev.TipoEvento)">
+            <span class="md-ev-minuto">{{ ev.Minuto }}'</span>
+            <span class="md-ev-icono">{{ getIconoEvento(ev.TipoEvento) }}</span>
+            <div class="md-ev-info">
+              <span class="md-ev-equipo" *ngIf="ev.Equipo">{{ ev.Equipo }}</span>
+              <span class="md-ev-desc">{{ ev.Descripcion }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sin-datos-modal"
+        *ngIf="estadisticasDetalle.length === 0 && eventosDetalle.length === 0">
+        <i class="bi bi-info-circle"></i>
+        <span>No hay detalles disponibles para este partido</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+  <app-start></app-start>
+</div>

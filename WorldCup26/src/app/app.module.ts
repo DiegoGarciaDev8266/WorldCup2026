@@ -2,26 +2,26 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgChartsModule } from 'ng2-charts';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
-
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './Users/login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
-import { RegisterUserComponent } from './Users/register-user/register-user.component';
-import { StartComponent } from './Home/Menu/start.component';
 
-import { ToastrModule } from 'ngx-toastr';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DashboardComponent } from './Home/Dashboard/dashboard.component';
-import { RegisterUserConfigComponent } from './Configuration/register-userConfig/register-userConfig.component';
-import { GestionRolesComponent } from './Configuration/gestion-roles/gestion-roles.component';
-import { GestionSeleccionesComponent } from './Configuration/gestion-selecciones/gestion-selecciones.component';
-import { ProgramacionCalendarioComponent } from './Configuration/programacion-calendario/programacion-calendario.component';
-import { RegistroResultadosComponent } from './Configuration/registro-resultados/registro-resultados.component';
-import { CommonModule } from '@angular/common';
+import { LoginComponent } from './features/auth/components/login/login.component';
+import { RegisterUserComponent } from './features/auth/components/register-user/register-user.component';
+import { StartComponent } from './core/components/menu/start.component';
+import { DashboardComponent } from './features/dashboard/components/dashboard/dashboard.component';
+import { RegisterUserConfigComponent } from './features/configuration/components/register-user-config/register-userConfig.component';
+import { GestionRolesComponent } from './features/configuration/components/gestion-roles/gestion-roles.component';
+import { GestionSeleccionesComponent } from './features/configuration/components/gestion-selecciones/gestion-selecciones.component';
+import { ProgramacionCalendarioComponent } from './features/configuration/components/programacion-calendario/programacion-calendario.component';
+import { RegistroResultadosComponent } from './features/configuration/components/registro-resultados/registro-resultados.component';
+import { TablaPosicionesComponent } from './features/dashboard/components/tabla-posiciones/tabla-posiciones.component';
+import { ConsultaPartidosComponent } from './features/dashboard/components/consulta-partidos/consulta-partidos.component';
+import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo.component';
 
 
 @NgModule({
@@ -35,22 +35,21 @@ import { CommonModule } from '@angular/common';
     GestionRolesComponent,
     GestionSeleccionesComponent,
     ProgramacionCalendarioComponent,
-    RegistroResultadosComponent
-    
-    
+    RegistroResultadosComponent,
+    TablaPosicionesComponent,
+    ConsultaPartidosComponent,
+    EnVivoComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
     NgChartsModule,
     HttpClientModule,
     CommonModule,
-    BrowserAnimationsModule, // Requerido
-    ToastrModule.forRoot(), // Configuración global
-     FormsModule 
-    
-    
+    BrowserAnimationsModule,
+    ToastrModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

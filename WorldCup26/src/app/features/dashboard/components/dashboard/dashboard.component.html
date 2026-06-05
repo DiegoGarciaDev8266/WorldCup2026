@@ -1,0 +1,252 @@
+<body>
+  <div class="container-fluid">
+    <main>
+      <section>
+        <div class="dashboard">
+
+          <!-- HEADER -->
+          <div class="header">
+            <div class="header-left">
+              <div class="logo-titulo">
+                <img src="assets/Logo.png" alt="Logo" class="dash-logo"/>
+                <h2>WorldCup</h2>
+              </div>
+              <span class="fecha-hoy">{{ today | date:'fullDate' }}</span>
+            </div>
+          </div>
+
+          <!-- CARDS -->
+          <div class="cards">
+            <div class="card">
+              <div class="card-icon">⚽</div>
+              <h3>48</h3>
+              <p>Equipos</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🗓️</div>
+              <h3>104</h3>
+              <p>Partidos</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🏟️</div>
+              <h3>16</h3>
+              <p>Estadios</p>
+            </div>
+            <div class="card">
+              <div class="card-icon">🌎</div>
+              <h3>3</h3>
+              <p>Países Sede</p>
+            </div>
+          </div>
+
+          <!-- SEDES Y FECHAS -->
+          <div class="section-row">
+
+            <div class="info-box flex-2">
+              <h4>🏟️ Países Sede</h4>
+              <div class="sedes-grid">
+                <div class="sede-item">
+                  <img src="https://flagcdn.com/w80/us.png" alt="USA"/>
+                  <div>
+                    <strong>Estados Unidos</strong>
+                    <small>11 estadios · 78 partidos</small>
+                  </div>
+                </div>
+                <div class="sede-item">
+                  <img src="https://flagcdn.com/w80/ca.png" alt="Canada"/>
+                  <div>
+                    <strong>Canadá</strong>
+                    <small>2 estadios · 13 partidos</small>
+                  </div>
+                </div>
+                <div class="sede-item">
+                  <img src="https://flagcdn.com/w80/mx.png" alt="Mexico"/>
+                  <div>
+                    <strong>México</strong>
+                    <small>3 estadios · 13 partidos</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="info-box flex-1">
+              <h4>📅 Fechas Clave</h4>
+              <div class="fechas-list">
+                <div class="fecha-item">
+                  <span class="fecha-dot" style="background:#00c6ff"></span>
+                  <div>
+                    <strong>Inauguración</strong>
+                    <small>Ciudad de México</small>
+                  </div>
+                </div>
+                <div class="fecha-item">
+                  <span class="fecha-dot" style="background:#28a745"></span>
+                  <div>
+                    <strong>Fin Fase de Grupos</strong>
+                    <small>3 Jul 2026</small>
+                  </div>
+                </div>
+                <div class="fecha-item">
+                  <span class="fecha-dot" style="background:#ffc107"></span>
+                  <div>
+                    <strong>Semifinales</strong>
+                    <small>18-19 Jul 2026</small>
+                  </div>
+                </div>
+                <div class="fecha-item">
+                  <span class="fecha-dot" style="background:#e94560"></span>
+                  <div>
+                    <strong>Gran Final</strong>
+                    <small>26 Jul 2026 — MetLife Stadium</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- FASES -->
+          <div class="info-box">
+            <h4>🏆 Fases del Torneo</h4>
+            <div class="fases-grid">
+              <div class="fase-item fase-grupos">
+                <span class="fase-num">1</span>
+                <div>
+                  <strong>Fase de Grupos</strong>
+                  <small>12 grupos · 48 equipos</small>
+                  <small>11 Jun — 3 Jul</small>
+                </div>
+              </div>
+              <div class="fase-arrow">→</div>
+              <div class="fase-item fase-32">
+                <span class="fase-num">2</span>
+                <div>
+                  <strong>Dieciseisavos</strong>
+                  <small>32 equipos</small>
+                  <small>4 — 7 Jul</small>
+                </div>
+              </div>
+              <div class="fase-arrow">→</div>
+              <div class="fase-item fase-16">
+                <span class="fase-num">3</span>
+                <div>
+                  <strong>Octavos</strong>
+                  <small>16 equipos</small>
+                  <small>8 — 11 Jul</small>
+                </div>
+              </div>
+              <div class="fase-arrow">→</div>
+              <div class="fase-item fase-8">
+                <span class="fase-num">4</span>
+                <div>
+                  <strong>Cuartos</strong>
+                  <small>8 equipos</small>
+                  <small>14 — 15 Jul</small>
+                </div>
+              </div>
+              <div class="fase-arrow">→</div>
+              <div class="fase-item fase-4">
+                <span class="fase-num">5</span>
+                <div>
+                  <strong>Semifinal</strong>
+                  <small>4 equipos</small>
+                  <small>18 — 19 Jul</small>
+                </div>
+              </div>
+              <div class="fase-arrow">→</div>
+              <div class="fase-item fase-final">
+                <span class="fase-num">🏆</span>
+                <div>
+                  <strong>Final</strong>
+                  <small>2 equipos</small>
+                  <small>26 Jul</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- GRUPOS -->
+          <div class="info-box">
+            <h4>🌍 Grupos — Copa del Mundo 2026</h4>
+            <p class="grupos-desc">
+              48 selecciones divididas en <strong>12 grupos</strong> de 4 equipos.
+              Clasifican los <strong>2 primeros</strong> de cada grupo más los
+              <strong>8 mejores terceros</strong>.
+            </p>
+            <div class="grupos-grid">
+              <div *ngFor="let g of grupos" class="grupo-badge">Grupo {{ g }}</div>
+            </div>
+          </div>
+
+          <!-- CARRUSEL TABLA DE POSICIONES -->
+          <div class="info-box carrusel-box">
+            <div class="carrusel-header">
+              <h4>📊 Tabla de Posiciones — Fase de Grupos</h4>
+              <span class="grupo-activo-badge">Grupo {{ grupoCarrusel }}</span>
+            </div>
+
+            <div class="carrusel-dots">
+              <button *ngFor="let g of grupos"
+                class="dot-btn"
+                [class.dot-activo]="grupoCarrusel === g"
+                (click)="irGrupo(g)">
+                {{ g }}
+              </button>
+            </div>
+
+            <div class="carrusel-tabla">
+              <table class="table table-dark table-hover mb-0"
+                *ngIf="posicionesGrupoCarrusel.length > 0">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Equipo</th>
+                    <th>PJ</th>
+                    <th>G</th>
+                    <th>E</th>
+                    <th>P</th>
+                    <th>GF</th>
+                    <th>GC</th>
+                    <th>DIF</th>
+                    <th>PTS</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let pos of posicionesGrupoCarrusel; let i = index"
+                    [class.fila-clasifica]="i < 2">
+                    <td>
+                      <span *ngIf="i < 2">🟢</span>
+                      <span *ngIf="i >= 2">⚪</span>
+                      {{ i + 1 }}
+                    </td>
+                    <td><strong>{{ pos.NombreEquipo }}</strong></td>
+                    <td>{{ pos.PartidosJugados }}</td>
+                    <td>{{ pos.Ganados }}</td>
+                    <td>{{ pos.Empatados }}</td>
+                    <td>{{ pos.Perdidos }}</td>
+                    <td>{{ pos.GolesAFavor }}</td>
+                    <td>{{ pos.GolesEnContra }}</td>
+                    <td [class.text-success]="pos.GolesAFavor - pos.GolesEnContra > 0"
+                        [class.text-danger]="pos.GolesAFavor - pos.GolesEnContra < 0">
+                      {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}
+                      {{ pos.GolesAFavor - pos.GolesEnContra }}
+                    </td>
+                    <td><strong class="text-warning">{{ pos.Puntos }}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div *ngIf="posicionesGrupoCarrusel.length === 0" class="sin-datos">
+                <span>📋 Sin datos para el Grupo {{ grupoCarrusel }}</span>
+              </div>
+            </div>
+
+            <small class="clasifican-texto">🟢 Clasifican a la siguiente ronda</small>
+          </div>
+
+        </div>
+      </section>
+    </main>
+  </div>
+  <app-start></app-start>
+</body>

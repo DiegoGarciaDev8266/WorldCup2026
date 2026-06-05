@@ -1,0 +1,134 @@
+<div class="tp-container">
+
+  <!-- HEADER -->
+  <div class="tp-header">
+    <div class="tp-header-left">
+      <img src="assets/Logo.png" alt="Logo" class="tp-logo"/>
+      <div>
+        <h2>Tabla de Posiciones</h2>
+        <span class="tp-subtitle">FIFA World Cup 2026 — Fase de Grupos</span>
+      </div>
+    </div>
+    <div class="tp-badge">
+      🏆 12 Grupos · 48 Equipos
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="tp-loading" *ngIf="cargando">
+    <div class="spinner"></div>
+    <span>Cargando posiciones...</span>
+  </div>
+
+  <div *ngIf="!cargando">
+
+    <!-- SELECTOR DE GRUPOS -->
+    <div class="grupos-nav">
+      <button *ngFor="let g of grupos"
+        class="grupo-btn"
+        [class.activo]="grupoActivo === g"
+        (click)="grupoActivo = g">
+        <span class="grupo-letra">{{ g }}</span>
+      </button>
+    </div>
+
+    <!-- TABLA DEL GRUPO ACTIVO -->
+    <div class="tp-card">
+      <div class="tp-card-header">
+        <h3>Grupo {{ grupoActivo }}</h3>
+        <div class="leyenda">
+            <span class="leyenda-item">
+                <span class="dot verde"></span> Clasifican a la siguiente ronda
+            </span>
+        </div>
+      </div>
+
+      <table class="tp-table">
+        <thead>
+          <tr>
+            <th class="th-pos">#</th>
+            <th class="th-equipo">Equipo</th>
+            <th>PJ</th>
+            <th>G</th>
+            <th>E</th>
+            <th>P</th>
+            <th>GF</th>
+            <th>GC</th>
+            <th>DIF</th>
+            <th>PTS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let pos of posicionesGrupoActivo; let i = index"
+            [class]="getClasificacion(i)">
+            <td class="td-pos">
+              <span class="pos-num">{{ i + 1 }}</span>
+            </td>
+            <td class="td-equipo">
+              <img *ngIf="pos.EscudoURL" [src]="pos.EscudoURL"
+                [alt]="pos.NombreEquipo" class="escudo"/>
+              <strong>{{ pos.NombreEquipo }}</strong>
+            </td>
+            <td>{{ pos.PartidosJugados }}</td>
+            <td>{{ pos.Ganados }}</td>
+            <td>{{ pos.Empatados }}</td>
+            <td>{{ pos.Perdidos }}</td>
+            <td>{{ pos.GolesAFavor }}</td>
+            <td>{{ pos.GolesEnContra }}</td>
+            <td [class.positivo]="pos.GolesAFavor - pos.GolesEnContra > 0"
+                [class.negativo]="pos.GolesAFavor - pos.GolesEnContra < 0">
+              {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}{{ pos.GolesAFavor - pos.GolesEnContra }}
+            </td>
+            <td class="td-pts">
+              <strong>{{ pos.Puntos }}</strong>
+            </td>
+          </tr>
+          <tr *ngIf="posicionesGrupoActivo.length === 0">
+            <td colspan="10" class="sin-datos">
+              Sin datos para el Grupo {{ grupoActivo }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- VISTA GENERAL TODOS LOS GRUPOS -->
+    <div class="todos-grupos">
+      <h3 class="todos-titulo">📊 Resumen General</h3>
+      <div class="grupos-grid">
+        <div *ngFor="let g of todosLosGrupos" class="grupo-mini-card">
+          <div class="grupo-mini-header">
+            <span>Grupo {{ g.grupo }}</span>
+          </div>
+          <table class="mini-table">
+            <thead>
+              <tr>
+                <th>Equipo</th>
+                <th>PJ</th>
+                <th>PTS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let eq of g.equipos; let i = index"
+                [class.mini-clasifica]="i < 2">
+                <td>
+                  <img *ngIf="eq.EscudoURL" [src]="eq.EscudoURL"
+                    [alt]="eq.NombreEquipo" class="escudo-mini"/>
+                  {{ eq.NombreEquipo }}
+                </td>
+                <td>{{ eq.PartidosJugados }}</td>
+                <td><strong>{{ eq.Puntos }}</strong></td>
+              </tr>
+              <tr *ngIf="g.equipos.length === 0">
+                <td colspan="3" class="sin-datos-mini">Sin datos</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <app-start></app-start>
+</div>

@@ -1,0 +1,79 @@
+<header>
+  <div class="header">
+    <img src="assets/Logo.png" class="logo-header">
+    <span class="header-title">WorldCup</span>
+  </div>
+</header>
+
+<main>
+  <div class="page">
+
+    <div class="register-card">
+      <h1>Crear Cuenta</h1>
+      <p class="register-subtitle">Únete al sistema WorldCup 2026</p>
+
+      <form [formGroup]="form_resgiter_user" (ngSubmit)="onSumit()">
+
+        <div class="form-grid">
+
+          <div class="input-group">
+            <label for="nombre">
+              <i class="bi bi-person-fill"></i> Nombre completo
+            </label>
+            <input formControlName="txtnombre" type="text" id="nombre"
+              class="form-input" placeholder="Michael Carlyle Hall"/>
+            <div class="error-msg"
+              *ngIf="form_resgiter_user.get('txtnombre')?.invalid && form_resgiter_user.get('txtnombre')?.touched">
+              El nombre es requerido
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="email">
+              <i class="bi bi-envelope-fill"></i> Correo electrónico
+            </label>
+            <input formControlName="txtemail" type="email" id="email"
+              class="form-input" placeholder="correo@ejemplo.com"/>
+            <div class="error-msg"
+              *ngIf="form_resgiter_user.get('txtemail')?.invalid && form_resgiter_user.get('txtemail')?.touched">
+              Ingresa un email válido
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="pass">
+              <i class="bi bi-lock-fill"></i> Contraseña
+            </label>
+            <input formControlName="txtpass" type="password" id="pass"
+              class="form-input" placeholder="••••••••"/>
+            <div class="error-msg"
+              *ngIf="form_resgiter_user.get('txtpass')?.invalid && form_resgiter_user.get('txtpass')?.touched">
+              La contraseña es requerida
+            </div>
+          </div>
+
+        </div>
+
+        <div class="btn-group">
+          <button class="btn-register" type="submit">
+            <i class="bi bi-person-plus-fill"></i> Registrarse
+          </button>
+          <button class="btn-back" type="button" routerLink="/login">
+            <i class="bi bi-arrow-left"></i> Volver
+          </button>
+        </div>
+
+        <div class="login-link">
+          ¿Ya tienes cuenta?
+          <a routerLink="/login">Inicia sesión aquí</a>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 WorldCup — Todos los derechos reservados</p>
+</footer>

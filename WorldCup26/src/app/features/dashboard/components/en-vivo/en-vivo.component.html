@@ -1,0 +1,300 @@
+<div class="ev-container">
+
+  <!-- HEADER -->
+  <div class="ev-header">
+    <div class="ev-header-left">
+      <img src="assets/Logo.png" alt="Logo" class="ev-logo"/>
+      <div>
+        <h2>En Vivo</h2>
+        <span class="ev-subtitle">FIFA World Cup 2026</span>
+      </div>
+    </div>
+    <div class="ev-status" *ngIf="partidosEnVivo.length > 0">
+      <span class="dot-vivo"></span>
+      {{ partidosEnVivo.length }} partido(s) en curso
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  <div class="ev-loading" *ngIf="cargando">
+    <div class="spinner"></div>
+    <span>Verificando partidos en vivo...</span>
+  </div>
+
+  <div *ngIf="!cargando">
+
+    <!-- TABS — siempre visibles -->
+    <div class="ev-tabs">
+      <button class="ev-tab-btn"
+        [class.activo]="tabActiva === 'vivo'"
+        (click)="tabActiva = 'vivo'">
+        <span class="dot-vivo" *ngIf="partidosEnVivo.length > 0"></span>
+        En Vivo
+        <span class="tab-count" *ngIf="partidosEnVivo.length > 0">
+          {{ partidosEnVivo.length }}
+        </span>
+      </button>
+      <button class="ev-tab-btn"
+        [class.activo]="tabActiva === 'proximos'"
+        (click)="tabActiva = 'proximos'">
+        🗓️ Próximos
+        <span class="tab-count" *ngIf="proximosPartidos.length > 0">
+          {{ proximosPartidos.length }}
+        </span>
+      </button>
+    </div>
+
+    <!-- ==================== TAB EN VIVO ==================== -->
+    <div *ngIf="tabActiva === 'vivo'">
+
+      <!-- HAY PARTIDOS EN VIVO -->
+      <div *ngIf="partidosEnVivo.length > 0">
+
+        <!-- SELECTOR -->
+        <div class="partidos-nav" *ngIf="partidosEnVivo.length > 1">
+          <button *ngFor="let p of partidosEnVivo"
+            class="partido-nav-btn"
+            [class.activo]="partidoActivo?.PartidoID === p.PartidoID"
+            (click)="seleccionarPartido(p)">
+            {{ p.NombreLocal }} vs {{ p.NombreVisitante }}
+          </button>
+        </div>
+
+        <div class="ev-grid" *ngIf="partidoActivo">
+
+          <!-- COLUMNA IZQUIERDA — MARCADOR -->
+          <div class="marcador-col">
+
+            <div class="vivo-badge">
+              <span class="dot-vivo"></span>
+              EN VIVO
+            </div>
+
+            <div class="partido-meta">
+              <span><i class="bi bi-geo-alt"></i> {{ partidoActivo.Estadio || 'Por definir' }}</span>
+              <span><i class="bi bi-flag"></i> {{ partidoActivo.Fase }}</span>
+            </div>
+
+            <div class="marcador-principal">
+              <div class="equipo-vivo">
+                <div class="escudo-wrapper">
+                  <img *ngIf="partidoActivo.EscudoLocal"
+                    [src]="partidoActivo.EscudoLocal" class="escudo-vivo"/>
+                  <div class="escudo-placeholder" *ngIf="!partidoActivo.EscudoLocal">
+                    <i class="bi bi-shield-fill"></i>
+                  </div>
+                </div>
+                <span class="nombre-equipo">{{ partidoActivo.NombreLocal }}</span>
+              </div>
+
+              <div class="resultado-centro">
+                <div class="goles">
+                  <span class="gol-num">{{ golesLocal }}</span>
+                  <span class="gol-sep">-</span>
+                  <span class="gol-num">{{ golesVisitante }}</span>
+                </div>
+                <div class="minuto-badge" *ngIf="simulando && !medioTiempo">
+                  <span class="dot-vivo-sm"></span>
+                  {{ minutoActual }}'
+                </div>
+                <div class="medio-tiempo-badge" *ngIf="medioTiempo">
+                  ⏱️ Medio Tiempo
+                </div>
+                <div class="minuto-badge" *ngIf="!simulando && minutoActual === 0">
+                  Iniciando...
+                </div>
+                <div class="minuto-badge" *ngIf="!simulando && minutoActual === 90">
+                  Finalizado
+                </div>
+              </div>
+
+              <div class="equipo-vivo">
+                <div class="escudo-wrapper">
+                  <img *ngIf="partidoActivo.EscudoVisitante"
+                    [src]="partidoActivo.EscudoVisitante" class="escudo-vivo"/>
+                  <div class="escudo-placeholder" *ngIf="!partidoActivo.EscudoVisitante">
+                    <i class="bi bi-shield-fill"></i>
+                  </div>
+                </div>
+                <span class="nombre-equipo">{{ partidoActivo.NombreVisitante }}</span>
+              </div>
+            </div>
+
+            <!-- BARRA DE PROGRESO -->
+            <div class="progreso-box" *ngIf="simulando || minutoActual > 0">
+              <div class="progreso-info">
+                <span>Minuto {{ minutoActual }}</span>
+                <span>90'</span>
+              </div>
+              <div class="progreso-barra">
+                <div class="progreso-fill" [style.width.%]="porcentajePartido"></div>
+              </div>
+            </div>
+
+
+          </div>
+
+          <!-- COLUMNA DERECHA — EVENTOS -->
+          <div class="eventos-col">
+            <div class="eventos-header">
+              <h4>📋 Eventos del Partido</h4>
+              <span class="eventos-count">{{ eventos.length }} eventos</span>
+            </div>
+
+            <div class="eventos-lista">
+              <div *ngFor="let evento of eventos"
+                class="evento-item"
+                [ngClass]="getClaseEvento(evento.tipo)">
+                <div class="evento-minuto">{{ evento.minuto }}'</div>
+                <div class="evento-icono">{{ getIconoEvento(evento.tipo) }}</div>
+                <div class="evento-info">
+                  <span class="evento-equipo" *ngIf="evento.equipo">
+                    {{ evento.equipo }}
+                  </span>
+                  <span class="evento-desc">{{ evento.descripcion }}</span>
+                </div>
+              </div>
+
+              <div class="sin-eventos" *ngIf="eventos.length === 0">
+                <i class="bi bi-clock-history"></i>
+                <span>Los eventos aparecerán aquí</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- NO HAY PARTIDOS EN VIVO -->
+      <div *ngIf="partidosEnVivo.length === 0" class="sin-vivo-tab">
+        <i class="bi bi-broadcast" style="font-size:2.5rem; color:rgba(255,255,255,0.1)"></i>
+        <p>No hay partidos en curso en este momento</p>
+        <button class="btn-ver-proximos" (click)="tabActiva = 'proximos'">
+          <i class="bi bi-calendar3"></i>
+          Ver próximos partidos
+        </button>
+      </div>
+
+    </div>
+
+    <!-- ==================== TAB PRÓXIMOS ==================== -->
+    <div *ngIf="tabActiva === 'proximos'">
+
+      <div class="proximos-header">
+        <h3>🗓️ Próximos Partidos</h3>
+        <span class="proximos-sub">
+          {{ proximosPartidos.length }} partido(s) programado(s)
+        </span>
+      </div>
+
+      <!-- LISTA DE PRÓXIMOS PARTIDOS -->
+      <div class="proximos-lista" *ngIf="proximosPartidos.length > 0">
+        <div *ngFor="let p of proximosPartidos" class="proximo-card">
+
+          <div class="proximo-meta">
+            <span class="fase-badge-sm">{{ p.Fase }}</span>
+            <span class="proximo-fecha">
+              <i class="bi bi-calendar3"></i>
+              {{ p.FechaPartido | date:'dd MMM yyyy · HH:mm' }}
+            </span>
+            <span class="proximo-estadio" *ngIf="p.Estadio">
+              <i class="bi bi-geo-alt"></i>
+              {{ p.Estadio }}
+            </span>
+          </div>
+
+          <div class="proximo-marcador">
+            <div class="proximo-equipo">
+              <img *ngIf="p.EscudoLocal" [src]="p.EscudoLocal"
+                class="proximo-escudo" [alt]="p.NombreLocal"/>
+              <div class="proximo-escudo-placeholder" *ngIf="!p.EscudoLocal">
+                <i class="bi bi-shield-fill"></i>
+              </div>
+              <span>{{ p.NombreLocal }}</span>
+            </div>
+
+            <div class="proximo-vs">VS</div>
+
+            <div class="proximo-equipo">
+              <img *ngIf="p.EscudoVisitante" [src]="p.EscudoVisitante"
+                class="proximo-escudo" [alt]="p.NombreVisitante"/>
+              <div class="proximo-escudo-placeholder" *ngIf="!p.EscudoVisitante">
+                <i class="bi bi-shield-fill"></i>
+              </div>
+              <span>{{ p.NombreVisitante }}</span>
+            </div>
+          </div>
+
+          <!-- CUENTA REGRESIVA INDIVIDUAL -->
+          <div class="cuenta-regresiva" *ngIf="cuentasRegresivas[p.PartidoID]">
+            <span class="cr-label">Comienza en</span>
+            <div class="cr-grid">
+              <div class="cr-item">
+                <span class="cr-num">{{ cuentasRegresivas[p.PartidoID].dias }}</span>
+                <span class="cr-label-sm">d</span>
+              </div>
+              <span class="cr-sep">:</span>
+              <div class="cr-item">
+                <span class="cr-num">{{ cuentasRegresivas[p.PartidoID].horas | number:'2.0-0' }}</span>
+                <span class="cr-label-sm">h</span>
+              </div>
+              <span class="cr-sep">:</span>
+              <div class="cr-item">
+                <span class="cr-num">{{ cuentasRegresivas[p.PartidoID].minutos | number:'2.0-0' }}</span>
+                <span class="cr-label-sm">m</span>
+              </div>
+              <span class="cr-sep">:</span>
+              <div class="cr-item">
+                <span class="cr-num">{{ cuentasRegresivas[p.PartidoID].segundos | number:'2.0-0' }}</span>
+                <span class="cr-label-sm">s</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="cuenta-regresiva iniciando"
+            *ngIf="!cuentasRegresivas[p.PartidoID]">
+            <span>⚽ A punto de comenzar</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SIN PARTIDOS PROGRAMADOS -->
+      <div class="sin-proximos" *ngIf="proximosPartidos.length === 0">
+        <div class="proximos-card-info">
+          <span class="copa-emoji">🏆</span>
+          <h3>FIFA World Cup 2026</h3>
+          <p>No hay partidos programados próximamente</p>
+          <div class="sedes-vivo">
+            <div class="sede-vivo-item">
+              <img src="https://flagcdn.com/w40/us.png" alt="USA"/>
+              <span>Estados Unidos</span>
+            </div>
+            <div class="sede-vivo-item">
+              <img src="https://flagcdn.com/w40/ca.png" alt="Canada"/>
+              <span>Canadá</span>
+            </div>
+            <div class="sede-vivo-item">
+              <img src="https://flagcdn.com/w40/mx.png" alt="Mexico"/>
+              <span>México</span>
+            </div>
+          </div>
+          <div class="info-torneo">
+            <div class="info-item">
+              <i class="bi bi-calendar-event"></i>
+              <span>Inauguración — Ciudad de México</span>
+            </div>
+            <div class="info-item">
+              <i class="bi bi-trophy"></i>
+              <span>Gran Final — MetLife Stadium</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <app-start></app-start>
+</div>
