@@ -2,11 +2,9 @@
   <main>
     <div class="user-container">
 
-      <!-- FORMULARIO -->
       <section>
         <div class="form-section">
           <h3>⚙️ {{ modoEdicion ? 'Editar Rol de Usuario' : 'Gestión de Roles' }}</h3>
-
           <div class="row">
             <div class="col-md-6">
               <label>Email del Usuario</label>
@@ -21,7 +19,6 @@
               </select>
             </div>
           </div>
-
           <div class="row mt-2">
             <div class="col-md-6">
               <label>Estado</label>
@@ -31,7 +28,6 @@
               </select>
             </div>
           </div>
-
           <div class="mt-3 d-flex gap-2">
             <button class="btn btn-success" (click)="onSubmit()">
               {{ modoEdicion ? '💾 Actualizar' : 'Guardar' }}
@@ -43,7 +39,6 @@
         </div>
       </section>
 
-      <!-- TABLA -->
       <section>
         <div class="table-section mt-4">
           <h3>📋 Usuarios Registrados</h3>
@@ -54,10 +49,6 @@
                 <th>Nombre</th>
                 <th>Email</th>
                 <th>Rol</th>
-<<<<<<< HEAD:WorldCup26/src/app/Configuration/gestion-roles/gestion-roles.component.html
-                <th>Descripción Rol</th>
-=======
->>>>>>> origin/main:WorldCup26/src/app/features/configuration/components/gestion-roles/gestion-roles.component.html
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
@@ -87,7 +78,7 @@
                 </td>
               </tr>
               <tr *ngIf="listaUsuarios.length === 0">
-                <td colspan="7" class="text-center text-muted py-4">
+                <td colspan="6" class="text-center text-muted py-4">
                   No hay usuarios registrados
                 </td>
               </tr>
@@ -96,58 +87,52 @@
         </div>
       </section>
 
-      <app-start></app-start>
     </div>
   </main>
 
   <!-- MODAL VER DETALLE -->
-<div class="modal fade show d-block" *ngIf="mostrarModal"
-  style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
-  <div class="modal-dialog">
-    <div class="modal-content bg-dark text-white">
-      <div class="modal-header">
-        <h5 class="modal-title">⚙️ Detalle del Usuario</h5>
-        <button type="button" class="btn-close btn-close-white"
-          (click)="cerrarModal()"></button>
-      </div>
-      <div class="modal-body">
-        <!-- <div class="detalle-row">
-          <span class="detalle-label">ID</span>
-          <span class="detalle-valor">{{ usuarioSeleccionado?.ID }}</span>
-        </div> -->
-        <div class="detalle-row">
-          <span class="detalle-label">Nombre</span>
-          <span class="detalle-valor">{{ usuarioSeleccionado?.NOMBRE }}</span>
+  <div class="modal fade show d-block" *ngIf="mostrarModal"
+    style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">⚙️ Detalle del Usuario</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
         </div>
-        <div class="detalle-row">
-          <span class="detalle-label">Email</span>
-          <span class="detalle-valor">{{ usuarioSeleccionado?.EMAIL }}</span>
-        </div>
-        <div class="detalle-row">
-          <span class="detalle-label">Nombre Rol</span>
-          <span class="detalle-valor">{{ usuarioSeleccionado?.NOMBRE_ROL }}</span>
-        </div>
-        <div class="detalle-row">
-          <span class="detalle-label">Estado</span>
-          <span class="detalle-valor">
-            <span [class]="usuarioSeleccionado?.ESTADO === 'ACT' ? 'badge bg-success' : 'badge bg-danger'">
-              {{ usuarioSeleccionado?.ESTADO === 'ACT' ? 'Activo' : 'Inactivo' }}
+        <div class="modal-body">
+          <div class="detalle-row">
+            <span class="detalle-label">Nombre</span>
+            <span class="detalle-valor">{{ usuarioSeleccionado?.NOMBRE }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Email</span>
+            <span class="detalle-valor">{{ usuarioSeleccionado?.EMAIL }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Nombre Rol</span>
+            <span class="detalle-valor">{{ usuarioSeleccionado?.NOMBRE_ROL }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Estado</span>
+            <span class="detalle-valor">
+              <span [class]="usuarioSeleccionado?.ESTADO === 'ACT' ? 'badge bg-success' : 'badge bg-danger'">
+                {{ usuarioSeleccionado?.ESTADO === 'ACT' ? 'Activo' : 'Inactivo' }}
+              </span>
             </span>
-          </span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Creado por</span>
+            <span class="detalle-valor">{{ usuarioSeleccionado?.USUARIO_CREACION }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fecha creación</span>
+            <span class="detalle-valor">{{ usuarioSeleccionado?.FECHA_CREACION | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
         </div>
-        <div class="detalle-row">
-          <span class="detalle-label">Creado por</span>
-          <span class="detalle-valor">{{ usuarioSeleccionado?.USUARIO_CREACION }}</span>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
         </div>
-        <div class="detalle-row">
-          <span class="detalle-label">Fecha creación</span>
-          <span class="detalle-valor">{{ usuarioSeleccionado?.FECHA_CREACION | date:'dd/MM/yyyy HH:mm' }}</span>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
       </div>
     </div>
   </div>
-</div>
 </body>

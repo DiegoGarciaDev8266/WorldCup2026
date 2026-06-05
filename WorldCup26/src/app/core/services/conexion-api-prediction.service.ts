@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 })
 export class ConexionApiPredictionService {
 
-  Api_Prediction = "http://localhost:3306"
+  Api_Prediction = "http://localhost:3000"
 
   constructor(private http: HttpClient, private router: Router) { }
 

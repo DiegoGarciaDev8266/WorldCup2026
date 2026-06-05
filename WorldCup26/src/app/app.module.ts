@@ -10,35 +10,31 @@ import { ToastrModule } from 'ngx-toastr';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-<<<<<<< HEAD
-import { ToastrModule } from 'ngx-toastr';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { DashboardComponent } from './Home/Dashboard/dashboard.component';
-import { RegisterUserConfigComponent } from './Configuration/register-userConfig/register-userConfig.component';
-import { GestionRolesComponent } from './Configuration/gestion-roles/gestion-roles.component';
-import { GestionSeleccionesComponent } from './Configuration/gestion-selecciones/gestion-selecciones.component';
-import { ProgramacionCalendarioComponent } from './Configuration/programacion-calendario/programacion-calendario.component';
-import { RegistroResultadosComponent } from './Configuration/registro-resultados/registro-resultados.component';
-import { CommonModule } from '@angular/common';
-import { TeamsComponent } from './Prediction/teams/teams.component';
-import { TeamsStatisticsComponent } from './Prediction/teams-statistics/teams-statistics.component';
-import { MatchesComponent } from './Prediction/matches/matches.component';
-import { PredictionsComponent } from './Prediction/predictions/predictions.component';
-=======
+// Auth
 import { LoginComponent } from './features/auth/components/login/login.component';
 import { RegisterUserComponent } from './features/auth/components/register-user/register-user.component';
+
+// Core
 import { StartComponent } from './core/components/menu/start.component';
+
+// Dashboard
 import { DashboardComponent } from './features/dashboard/components/dashboard/dashboard.component';
+import { TablaPosicionesComponent } from './features/dashboard/components/tabla-posiciones/tabla-posiciones.component';
+import { ConsultaPartidosComponent } from './features/dashboard/components/consulta-partidos/consulta-partidos.component';
+import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo.component';
+
+// Configuration
 import { RegisterUserConfigComponent } from './features/configuration/components/register-user-config/register-userConfig.component';
 import { GestionRolesComponent } from './features/configuration/components/gestion-roles/gestion-roles.component';
 import { GestionSeleccionesComponent } from './features/configuration/components/gestion-selecciones/gestion-selecciones.component';
 import { ProgramacionCalendarioComponent } from './features/configuration/components/programacion-calendario/programacion-calendario.component';
 import { RegistroResultadosComponent } from './features/configuration/components/registro-resultados/registro-resultados.component';
-import { TablaPosicionesComponent } from './features/dashboard/components/tabla-posiciones/tabla-posiciones.component';
-import { ConsultaPartidosComponent } from './features/dashboard/components/consulta-partidos/consulta-partidos.component';
-import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo.component';
->>>>>>> origin/main
 
+// Prediction
+import { TeamsComponent } from './Prediction/teams/teams.component';
+import { TeamsStatisticsComponent } from './Prediction/teams-statistics/teams-statistics.component';
+import { MatchesComponent } from './Prediction/matches/matches.component';
+import { PredictionsComponent } from './Prediction/predictions/predictions.component';
 
 @NgModule({
   declarations: [
@@ -47,24 +43,18 @@ import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo
     RegisterUserComponent,
     StartComponent,
     DashboardComponent,
+    TablaPosicionesComponent,
+    ConsultaPartidosComponent,
+    EnVivoComponent,
     RegisterUserConfigComponent,
     GestionRolesComponent,
     GestionSeleccionesComponent,
     ProgramacionCalendarioComponent,
     RegistroResultadosComponent,
-<<<<<<< HEAD
     TeamsComponent,
     TeamsStatisticsComponent,
     MatchesComponent,
     PredictionsComponent
-    
-    
-    
-=======
-    TablaPosicionesComponent,
-    ConsultaPartidosComponent,
-    EnVivoComponent
->>>>>>> origin/main
   ],
   imports: [
     BrowserModule,
@@ -74,16 +64,8 @@ import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo
     NgChartsModule,
     HttpClientModule,
     CommonModule,
-<<<<<<< HEAD
-    BrowserAnimationsModule, // Requerido
-    ToastrModule.forRoot(), // Configuración global
-    FormsModule 
-    
-    
-=======
     BrowserAnimationsModule,
     ToastrModule.forRoot()
->>>>>>> origin/main
   ],
   providers: [],
   bootstrap: [AppComponent]

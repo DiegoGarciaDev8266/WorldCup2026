@@ -30,19 +30,9 @@ export class GestionRolesComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-<<<<<<< HEAD:WorldCup26/src/app/Configuration/gestion-roles/gestion-roles.component.ts
-    this.cargarRoles();
-  }
-
-  cargarRoles() {
-    this.conexionService.GetRoles().subscribe({
-      next: (data) => {
-=======
-    // Observer Pattern: componente se suscribe al flujo roles$
     this.rolesService.roles$
       .pipe(takeUntil(this.destroy$))
       .subscribe(data => {
->>>>>>> origin/main:WorldCup26/src/app/features/configuration/components/gestion-roles/gestion-roles.component.ts
         console.log('datos roles:', data);
         this.listaUsuarios = data;
       });
@@ -69,10 +59,6 @@ export class GestionRolesComponent implements OnInit, OnDestroy {
           progressAnimation: 'increasing', positionClass: 'toast-top-right'
         });
         this.cancelarEdicion();
-<<<<<<< HEAD:WorldCup26/src/app/Configuration/gestion-roles/gestion-roles.component.ts
-        this.cargarRoles();
-=======
->>>>>>> origin/main:WorldCup26/src/app/features/configuration/components/gestion-roles/gestion-roles.component.ts
       },
       error: (err) => this.toastr.error('❌ Ocurrió un error', err.error?.message)
     });
@@ -101,22 +87,11 @@ export class GestionRolesComponent implements OnInit, OnDestroy {
 
   inactivarUsuario(usuario: GestionRolesMoldel) {
     const payload = { ...usuario, ESTADO: 'INA' };
-<<<<<<< HEAD:WorldCup26/src/app/Configuration/gestion-roles/gestion-roles.component.ts
-    this.conexionService.InactivarUsuario(payload).subscribe({
-      next: () => {
-        this.toastr.success('✅ Usuario inactivado', '', {
-          timeOut: 5000, progressBar: true, positionClass: 'toast-top-right'
-        });
-        this.cargarRoles();
-      },
-      error: (error) => { this.toastr.error('❌ Ocurrió un error', error.error?.message); }
-=======
     this.rolesService.inactivarUsuario(payload).subscribe({
       next: () => this.toastr.success('✅ Usuario inactivado', '', {
         timeOut: 5000, progressBar: true, positionClass: 'toast-top-right'
       }),
       error: (err) => this.toastr.error('❌ Ocurrió un error', err.error?.message)
->>>>>>> origin/main:WorldCup26/src/app/features/configuration/components/gestion-roles/gestion-roles.component.ts
     });
   }
 }

@@ -1,25 +1,397 @@
+// =============================================
+// BASE — aplica a todos los componentes config
+// =============================================
+
 section {
-  width: 88%;
+  width: 90%;
   margin: auto;
 }
 
 .user-container {
-  padding: 20px;
+  padding: 24px;
+  color: white;
+  background: #0b0b1f;
+  min-height: 100vh;
+}
+
+// HEADER DE SECCIÓN
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+  }
+}
+
+// FORM SECTION
+.form-section {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  padding: 24px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: white;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+}
+
+// TABLE SECTION
+.table-section {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  padding: 24px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.05);
+  margin-bottom: 20px;
+
+  h3 {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: white;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+}
+
+// INPUTS
+.form-label {
+  color: rgba(255,255,255,0.7);
+  font-size: 0.82rem;
+  margin-bottom: 6px;
+}
+
+.form-control, .form-select {
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  transition: 0.2s;
+
+  &::placeholder { color: rgba(255,255,255,0.25) !important; }
+
+  &:focus {
+    outline: none !important;
+    border-color: #00c6ff !important;
+    background: rgba(0,198,255,0.05) !important;
+    box-shadow: 0 0 0 3px rgba(0,198,255,0.1) !important;
+    color: white !important;
+  }
+
+  option {
+    background: #1a1a2e;
+    color: white;
+  }
+}
+
+// BOTONES
+.btn-primary {
+  background: linear-gradient(135deg, #00c6ff, #0072ff) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  transition: 0.2s !important;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(0,114,255,0.4) !important;
+  }
+}
+
+.btn-warning {
+  background: linear-gradient(135deg, #ffc107, #ff8c00) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: #000 !important;
+  font-weight: 600 !important;
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #e94560, #c0392b) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.1) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+
+  &:hover { background: rgba(255,255,255,0.15) !important; }
+}
+
+.btn-success {
+  background: linear-gradient(135deg, #28a745, #20c997) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+}
+
+.btn-info {
+  background: linear-gradient(135deg, #17a2b8, #0dcaf0) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+.actions button { margin-right: 6px; }
+
+// TABLA
+.table-dark {
+  --bs-table-bg: transparent !important;
+  --bs-table-striped-bg: rgba(255,255,255,0.03) !important;
+  --bs-table-hover-bg: rgba(0,198,255,0.05) !important;
+  border-color: rgba(255,255,255,0.06) !important;
+
+  thead tr th {
+    background: rgba(0,198,255,0.08) !important;
+    color: #00c6ff !important;
+    font-size: 0.82rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    border-color: rgba(255,255,255,0.06) !important;
+    padding: 12px 16px !important;
+  }
+
+  tbody tr td {
+    color: white !important;
+    border-color: rgba(255,255,255,0.04) !important;
+    padding: 12px 16px !important;
+    vertical-align: middle !important;
+  }
+
+  tbody tr:hover td {
+    background: rgba(0,198,255,0.04) !important;
+  }
+}
+
+// BADGES
+.badge {
+  border-radius: 6px !important;
+  font-weight: 600 !important;
+  padding: 5px 10px !important;
+}
+
+// MODAL
+.modal-content {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+  border-radius: 14px !important;
+  color: white !important;
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+
+  .modal-title { color: white !important; font-weight: 700 !important; }
+  .btn-close { filter: invert(1) !important; }
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+// DETALLE ROWS (modal info)
+.detalle-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  align-items: center;
+}
+
+.detalle-label {
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 130px;
+}
+
+.detalle-valor {
+  color: white;
+  text-align: right;
+  font-size: 0.9rem;
+}
+
+.detalle-pass {
+  justify-content: flex-start;
+  border-bottom: none;
+  margin-top: 4px;
+}
+
+// TABS (registro-resultados)
+.tabs-container {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.tab-btn {
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.6);
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba(0,198,255,0.1);
+    color: white;
+    border-color: rgba(0,198,255,0.3);
+  }
+
+  &.active {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    font-weight: 700;
+    border-color: transparent;
+  }
+}
+
+// MARCADOR
+.marcador-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  padding: 28px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+  margin-top: 16px;
+}
+
+.equipo-marcador {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 160px;
+}
+
+.nombre-equipo {
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
   color: white;
 }
 
-.form-section {
-  background: #111;
-  padding: 20px;
-  border-radius: 10px;
+.goles-control {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.table-section {
-  background: #111;
-  padding: 20px;
-  border-radius: 10px;
+.goles-numero {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ffc107;
+  min-width: 50px;
+  text-align: center;
 }
 
-.actions button {
-  margin-right: 5px;
+.vs-separador {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: rgba(255,255,255,0.3);
+}
+
+.partido-info {
+  display: flex;
+  gap: 20px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.88rem;
+  flex-wrap: wrap;
+
+  span { display: flex; align-items: center; gap: 6px; }
+}
+
+// MARCADOR EN TABLA
+.marcador-tabla {
+  font-weight: bold;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+
+  &.victoria-local {
+    background: rgba(40,167,69,0.15);
+    color: #5ddb80;
+    border: 1px solid rgba(40,167,69,0.3);
+  }
+  &.victoria-visitante {
+    background: rgba(220,53,69,0.15);
+    color: #f87e8a;
+    border: 1px solid rgba(220,53,69,0.3);
+  }
+  &.empate {
+    background: rgba(255,193,7,0.15);
+    color: #ffc107;
+    border: 1px solid rgba(255,193,7,0.3);
+  }
+}
+
+.fila-seleccionada td {
+  background: rgba(255,193,7,0.06) !important;
+  border-left: 3px solid #ffc107 !important;
+}
+
+// TABLA POSICIONES
+.clasificado td {
+  border-left: 3px solid #28a745;
+}
+
+.clasifican-texto {
+  color: rgba(255,255,255,0.4);
+  font-size: 0.78rem;
+  margin-top: 10px;
+  display: block;
+}
+
+// GRUPOS TABS
+.grupos-tabs .btn {
+  border-radius: 6px !important;
+  font-size: 0.78rem !important;
+  padding: 4px 12px !important;
+}
+
+// BÚSQUEDA
+.search-box {
+  position: relative;
+
+  input {
+    padding-left: 36px !important;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255,255,255,0.3);
+    font-size: 0.9rem;
+  }
 }

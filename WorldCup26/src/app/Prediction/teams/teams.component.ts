@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { StartComponent } from 'src/app/Home/Menu/start.component';
-import { ConexionApiPredictionService } from 'src/app/services/shared/conexion-api-prediction.service';
+import { ConexionApiPredictionService } from 'src/app/core/services/conexion-api-prediction.service';
 
 @Component({
   selector: 'app-teams',

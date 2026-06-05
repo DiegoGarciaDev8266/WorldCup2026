@@ -6,7 +6,7 @@ const estadisticaService = require('./estadistica.service');
 const schedulerService = {
 
   iniciar() {
-    console.log('⏰ Scheduler iniciado');
+    console.log(' Scheduler iniciado');
     cron.schedule('* * * * *', async () => {
       await this.verificarPartidosParaIniciar();
     });
@@ -27,13 +27,13 @@ const schedulerService = {
         AND P.FechaPartido <= GETDATE()
       `);
 
-      console.log(`🔍 Partidos para iniciar: ${result.recordset.length}`);
+      console.log(` Partidos para iniciar: ${result.recordset.length}`);
       for (const partido of result.recordset) {
         await this.iniciarPartido(partido);
       }
 
     } catch (error) {
-      console.error('❌ Error en scheduler:', error);
+      console.error(' Error en scheduler:', error);
     }
   },
 
@@ -62,10 +62,10 @@ const schedulerService = {
         'sistema'
       );
 
-      console.log(`⚽ Partido iniciado: ${partido.NombreLocal} vs ${partido.NombreVisitante}`);
+      console.log(` Partido iniciado: ${partido.NombreLocal} vs ${partido.NombreVisitante}`);
 
     } catch (error) {
-      console.error('❌ Error iniciando partido:', error);
+      console.error(' Error iniciando partido:', error);
     }
   }
 };

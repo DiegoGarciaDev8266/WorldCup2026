@@ -7,6 +7,7 @@ import { ApiService } from '../../../core/services/api.service';
   providedIn: 'root' // ← SINGLETON
 })
 export class RolesService {
+  [x: string]: any;
 
   // OBSERVER PATTERN
   private rolesSubject = new BehaviorSubject<any[]>([]);
