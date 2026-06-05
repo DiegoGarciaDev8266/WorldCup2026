@@ -1,0 +1,101 @@
+<div class="sidebar" [class.expanded]="isExpanded">
+
+  <!-- TOP -->
+  <div class="top">
+    <img *ngIf="isExpanded" src="assets/Logo.png" class="logo-img" alt="Logo"/>
+    <i *ngIf="!isExpanded" class="bi bi-trophy-fill icon" style="color:#00c6ff"></i>
+    <button class="toggle-btn" (click)="toggleSidebar()">☰</button>
+  </div>
+
+  <ul class="menu">
+
+    <li routerLink="/Dashboard" routerLinkActive="active-item">
+      <i class="bi bi-globe icon"></i>
+      <span class="text">Estadísticas Generales</span>
+    </li>
+
+    <li routerLink="/tabla-posiciones" routerLinkActive="active-item">
+      <i class="bi bi-bar-chart-fill icon"></i>
+      <span class="text">Tabla posiciones</span>
+    </li>
+
+    <li routerLink="/consulta-partidos" routerLinkActive="active-item">
+      <i class="bi bi-calendar icon"></i>
+      <span class="text">Consulta partidos</span>
+    </li>
+
+    <li routerLink="/en-vivo" routerLinkActive="active-item">
+      <i class="bi bi-broadcast icon"></i>
+      <span class="text">En vivo</span>
+      <span class="vivo-dot" *ngIf="hayPartidosEnVivo"></span>
+    </li>
+
+    <!-- PREDICCIONES -->
+    <li (click)="isExpanded && toggleSub('pred')"
+      [class.active-item]="subMenu.pred">
+      <i class="bi bi-robot icon"></i>
+      <span class="text">
+        Predicciones
+        <i [class]="subMenu.pred ? 'bi bi-caret-up-fill ms-1' : 'bi bi-caret-down-fill ms-1'"></i>
+      </span>
+    </li>
+
+    <div class="submenu-wrapper" *ngIf="subMenu.pred && isExpanded">
+      <ul class="submenu">
+        <li routerLink="/prediccion-partido" routerLinkActive="active-sub">
+          <i class="bi bi-lightning-fill sub-icon"></i>
+          Ganador partido
+        </li>
+        <li routerLink="/prediccion-campeon" routerLinkActive="active-sub">
+          <i class="bi bi-trophy-fill sub-icon"></i>
+          Campeón torneo
+        </li>
+        <li routerLink="/prediccion-info" routerLinkActive="active-sub">
+          <i class="bi bi-info-circle-fill sub-icon"></i>
+          Explicación
+        </li>
+      </ul>
+    </div>
+
+    <!-- CONFIG — solo visible para admin -->
+    <li (click)="isExpanded && toggleSub('config')" *ngIf="esAdmin"
+      [class.active-item]="subMenu.config">
+      <i class="bi bi-gear icon"></i>
+      <span class="text">
+        Configuración
+        <i [class]="subMenu.config ? 'bi bi-caret-up-fill ms-1' : 'bi bi-caret-down-fill ms-1'"></i>
+      </span>
+    </li>
+
+    <div class="submenu-wrapper" *ngIf="subMenu.config && isExpanded && esAdmin">
+      <ul class="submenu">
+        <li routerLink="/Register_UserConfig" routerLinkActive="active-sub">
+          <i class="bi bi-person-fill sub-icon"></i>
+          Registro de usuarios
+        </li>
+        <li routerLink="/gestion-roles" routerLinkActive="active-sub">
+          <i class="bi bi-shield-fill sub-icon"></i>
+          Gestión de roles
+        </li>
+        <li routerLink="/gestion-selecciones" routerLinkActive="active-sub">
+          <i class="bi bi-flag-fill sub-icon"></i>
+          Registro de equipos
+        </li>
+        <li routerLink="/programacion-calendario" routerLinkActive="active-sub">
+          <i class="bi bi-calendar-check-fill sub-icon"></i>
+          Registro de partidos y resultados
+        </li>
+        <li routerLink="/registro-resultados" routerLinkActive="active-sub">
+          <i class="bi bi-clipboard-check-fill sub-icon"></i>
+          Log de Auditoría
+        </li>
+      </ul>
+    </div>
+
+    <li (click)="Salir()">
+      <i class="bi bi-door-open icon"></i>
+      <span class="text">Cerrar sesión</span>
+    </li>
+
+  </ul>
+</div>

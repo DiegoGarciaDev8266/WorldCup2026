@@ -1,0 +1,727 @@
+.ev-container {
+  background: #0b0b1f;
+  min-height: 100vh;
+  padding: 24px;
+  color: white;
+  margin-left: 90px;
+}
+
+// HEADER
+.ev-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .ev-header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    h2 { margin: 0; font-size: 1.6rem; font-weight: 800; }
+    .ev-subtitle { color: rgba(255,255,255,0.4); font-size: 0.85rem; }
+  }
+
+  .ev-logo { width: 56px; border-radius: 8px; }
+}
+
+.ev-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(233,69,96,0.15);
+  border: 1px solid rgba(233,69,96,0.3);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.88rem;
+  color: #f87e8a;
+  font-weight: 600;
+}
+
+// LOADING
+.ev-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+  gap: 16px;
+  color: rgba(255,255,255,0.4);
+
+  .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(0,198,255,0.2);
+    border-top-color: #00c6ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// DOT VIVO
+.dot-vivo {
+  width: 10px;
+  height: 10px;
+  background: #e94560;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+  display: inline-block;
+}
+
+.dot-vivo-sm {
+  width: 7px;
+  height: 7px;
+  background: #e94560;
+  border-radius: 50%;
+  animation: pulse 1s infinite;
+  display: inline-block;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+// PARTIDOS NAV
+.partidos-nav {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.partido-nav-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.6);
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: 0.2s;
+
+  &:hover { background: rgba(0,198,255,0.1); color: white; }
+
+  &.activo {
+    background: rgba(233,69,96,0.15);
+    border-color: rgba(233,69,96,0.4);
+    color: #f87e8a;
+    font-weight: 600;
+  }
+}
+
+// GRID PRINCIPAL
+.ev-grid {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+  align-items: start;
+}
+
+// COLUMNA MARCADOR
+.marcador-col {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  border-radius: 20px;
+  border: 1px solid rgba(233,69,96,0.2);
+  padding: 32px;
+  box-shadow: 0 0 40px rgba(233,69,96,0.06);
+}
+
+.vivo-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #e94560;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.partido-meta {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.82rem;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+
+  span { display: flex; align-items: center; gap: 5px; }
+}
+
+.marcador-principal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.equipo-vivo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+
+  .nombre-equipo {
+    font-size: 1rem;
+    font-weight: 700;
+    text-align: center;
+  }
+}
+
+.escudo-wrapper {
+  width: 80px;
+  height: 80px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(255,255,255,0.06);
+}
+
+.escudo-vivo {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+}
+
+.escudo-placeholder {
+  color: rgba(255,255,255,0.15);
+  font-size: 2rem;
+}
+
+.resultado-centro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-width: 120px;
+}
+
+.goles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .gol-num {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: white;
+    text-shadow: 0 0 20px rgba(0,198,255,0.2);
+  }
+
+  .gol-sep {
+    font-size: 2rem;
+    color: rgba(255,255,255,0.2);
+  }
+}
+
+.minuto-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #e94560;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.medio-tiempo-badge {
+  background: rgba(255,193,7,0.15);
+  border: 1px solid rgba(255,193,7,0.3);
+  color: #ffc107;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+// PROGRESO
+.progreso-box { margin-bottom: 20px; }
+
+.progreso-info {
+  display: flex;
+  justify-content: space-between;
+  color: rgba(255,255,255,0.4);
+  font-size: 0.78rem;
+  margin-bottom: 6px;
+}
+
+.progreso-barra {
+  height: 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progreso-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00c6ff, #e94560);
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+// IA BADGE
+.ia-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(0,198,255,0.06);
+  border: 1px solid rgba(0,198,255,0.15);
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: rgba(255,255,255,0.5);
+  font-size: 0.8rem;
+
+  i { color: #00c6ff; }
+
+  &.iniciando {
+    background: rgba(255,193,7,0.06);
+    border-color: rgba(255,193,7,0.15);
+    i { color: #ffc107; }
+  }
+}
+
+// COLUMNA EVENTOS
+.eventos-col {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.06);
+  overflow: hidden;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+}
+
+.eventos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+
+  h4 { margin: 0; font-size: 0.95rem; }
+
+  .eventos-count {
+    background: rgba(255,255,255,0.06);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.4);
+  }
+}
+
+.eventos-lista {
+  overflow-y: auto;
+  flex: 1;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+  }
+}
+
+.evento-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.04);
+  animation: slideIn 0.3s ease;
+
+  .evento-minuto {
+    min-width: 32px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+    padding-top: 2px;
+  }
+
+  .evento-icono {
+    font-size: 1.1rem;
+    min-width: 24px;
+    text-align: center;
+  }
+
+  .evento-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .evento-equipo {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #00c6ff;
+    }
+
+    .evento-desc {
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+  }
+
+  &.evento-gol {
+    background: rgba(40,167,69,0.1);
+    border-color: rgba(40,167,69,0.2);
+  }
+  &.evento-amarilla {
+    background: rgba(255,193,7,0.08);
+    border-color: rgba(255,193,7,0.2);
+  }
+  &.evento-roja {
+    background: rgba(233,69,96,0.1);
+    border-color: rgba(233,69,96,0.2);
+  }
+  &.evento-tiempo {
+    background: rgba(0,198,255,0.08);
+    border-color: rgba(0,198,255,0.2);
+  }
+  &.evento-fin {
+    background: rgba(255,193,7,0.1);
+    border-color: rgba(255,193,7,0.25);
+  }
+  &.evento-inicio {
+    background: rgba(0,198,255,0.06);
+    border-color: rgba(0,198,255,0.15);
+  }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sin-eventos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  gap: 10px;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.85rem;
+
+  i { font-size: 2rem; }
+}
+
+// PRÓXIMOS PARTIDOS
+.proximos-header {
+  margin-bottom: 20px;
+
+  h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 4px; }
+  .proximos-sub { color: rgba(255,255,255,0.4); font-size: 0.85rem; }
+}
+
+.proximos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 40px;
+}
+
+.proximo-card {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 20px 24px;
+  transition: 0.2s;
+
+  &:hover {
+    border-color: rgba(0,198,255,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+}
+
+.proximo-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+
+  .proximo-fecha, .proximo-estadio {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+.fase-badge-sm {
+  background: rgba(0,114,255,0.15);
+  color: #7eb8f7;
+  border: 1px solid rgba(0,114,255,0.3);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.proximo-marcador {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+}
+
+.proximo-equipo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.proximo-escudo {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.proximo-escudo-placeholder {
+  width: 44px;
+  height: 44px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 1.2rem;
+}
+
+.proximo-vs {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.2);
+  min-width: 40px;
+  text-align: center;
+}
+
+// CUENTA REGRESIVA
+.cuenta-regresiva {
+  background: rgba(0,198,255,0.06);
+  border: 1px solid rgba(0,198,255,0.15);
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .cr-label {
+    color: rgba(255,255,255,0.4);
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  &.iniciando {
+    background: rgba(40,167,69,0.08);
+    border-color: rgba(40,167,69,0.2);
+    justify-content: center;
+    color: #5ddb80;
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+}
+
+.cr-grid {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cr-item {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+
+  .cr-num {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #00c6ff;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cr-label-sm {
+    font-size: 0.7rem;
+    color: rgba(255,255,255,0.4);
+  }
+}
+
+.cr-sep {
+  color: rgba(0,198,255,0.4);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+// SIN PRÓXIMOS
+.sin-proximos {
+  display: flex;
+  justify-content: center;
+}
+
+.proximos-card-info {
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  border-radius: 20px;
+  border: 1px solid rgba(0,198,255,0.15);
+  padding: 40px;
+  text-align: center;
+  max-width: 600px;
+  width: 100%;
+
+  .copa-emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+  h3 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  p { color: rgba(255,255,255,0.4); font-size: 0.9rem; margin-bottom: 24px; }
+}
+
+.sedes-vivo {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+
+  .sede-vivo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.7);
+
+    img { width: 28px; border-radius: 3px; }
+  }
+}
+
+.info-torneo {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .info-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    color: rgba(255,255,255,0.5);
+    font-size: 0.88rem;
+
+    i { color: #00c6ff; }
+  }
+}
+
+// TABS
+.ev-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+  padding: 10px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.ev-tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba(0,198,255,0.1);
+    color: white;
+    border-color: rgba(0,198,255,0.3);
+  }
+
+  &.activo {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    color: white;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(0,114,255,0.3);
+  }
+}
+
+.tab-count {
+  background: rgba(255,255,255,0.2);
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+// SIN VIVO TAB
+.sin-vivo-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  gap: 16px;
+  color: rgba(255,255,255,0.3);
+
+  p { margin: 0; font-size: 0.9rem; }
+}
+
+.btn-ver-proximos {
+  background: rgba(0,198,255,0.1);
+  border: 1px solid rgba(0,198,255,0.2);
+  color: #00c6ff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: 0.2s;
+
+  &:hover {
+    background: rgba(0,198,255,0.2);
+    transform: translateY(-1px);
+  }
+}

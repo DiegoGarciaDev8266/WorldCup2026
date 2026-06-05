@@ -1,0 +1,77 @@
+<body>
+  <main>
+    <div class="user-container">
+      <section>
+
+        <div class="table-section">
+          <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <h3>📝 Log de Auditoría
+              <span class="badge bg-secondary ms-2">{{ logAuditoria.length }}</span>
+            </h3>
+            <div class="d-flex gap-2 flex-wrap">
+              <select class="form-select form-select-sm w-auto"
+                [(ngModel)]="filtroModulo" (change)="filtrar()">
+                <option value="">Todos los módulos</option>
+                <option value="EQUIPOS">Equipos</option>
+                <option value="PARTIDOS">Partidos</option>
+                <option value="RESULTADOS">Resultados</option>
+                <option value="ROLES">Roles</option>
+                <option value="USUARIOS">Usuarios</option>
+              </select>
+              <select class="form-select form-select-sm w-auto"
+                [(ngModel)]="filtroAccion" (change)="filtrar()">
+                <option value="">Todas las acciones</option>
+                <option value="REGISTRO">Registro</option>
+                <option value="ACTUALIZACIÓN">Actualización</option>
+                <option value="ELIMINACIÓN">Eliminación</option>
+                <option value="INACTIVACIÓN">Inactivación</option>
+                <option value="REGISTRO_RESULTADO">Resultado</option>
+              </select>
+            </div>
+          </div>
+
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Fecha</th>
+                <th>Módulo</th>
+                <th>Acción</th>
+                <th>Descripción</th>
+                <th>Usuario</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of logFiltrado; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ log.FechaAccion | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getModuloBadge(log.Modulo)">
+                    {{ log.Modulo }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getAccionBadge(log.TipoAccion)">
+                    {{ log.TipoAccion }}
+                  </span>
+                </td>
+                <td>{{ log.Descripcion }}</td>
+                <td>
+                  <i class="bi bi-person-fill me-1" style="color:#00c6ff"></i>
+                  {{ log.UsuarioAccion }}
+                </td>
+              </tr>
+              <tr *ngIf="logFiltrado.length === 0">
+                <td colspan="6" class="text-center text-muted py-4">
+                  No hay registros de auditoría
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </section>
+      <app-start></app-start>
+    </div>
+  </main>
+</body>

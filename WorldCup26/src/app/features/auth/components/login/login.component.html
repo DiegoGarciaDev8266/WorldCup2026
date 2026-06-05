@@ -1,0 +1,116 @@
+<header>
+  <div class="header">
+    <img src="assets/Logo.png" class="logo-header">
+    <span class="header-title">WorldCup</span>
+  </div>
+</header>
+
+<main>
+  <div class="login-container">
+
+    <!-- LEFT PANEL -->
+    <div class="left-panel">
+      <div class="left-content">
+        <h1 class="title">WELCOME TO<br><span class="title-highlight">WORLDCUP</span></h1>
+        <p class="subtitle">Sistema de gestión y predicciones<br>impulsado por inteligencia artificial</p>
+
+        <div class="stats-grid">
+          <div class="stat-item">
+            <span class="stat-num">48</span>
+            <span class="stat-label">Equipos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">104</span>
+            <span class="stat-label">Partidos</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">16</span>
+            <span class="stat-label">Estadios</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-num">3</span>
+            <span class="stat-label">Países Sede</span>
+          </div>
+        </div>
+
+        <div class="sedes">
+          <div class="sede-item">
+            <img src="https://flagcdn.com/w40/us.png" alt="USA"/>
+            <span>Estados Unidos</span>
+          </div>
+          <div class="sede-item">
+            <img src="https://flagcdn.com/w40/ca.png" alt="Canada"/>
+            <span>Canadá</span>
+          </div>
+          <div class="sede-item">
+            <img src="https://flagcdn.com/w40/mx.png" alt="Mexico"/>
+            <span>México</span>
+          </div>
+        </div>
+
+        <div class="fecha-final">
+          🏆 Gran Final · MetLife Stadium
+        </div>
+      </div>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <div class="login-box">
+      <h2>Iniciar Sesión</h2>
+      <p class="login-subtitle">Bienvenido al sistema WorldCup</p>
+
+      <form [formGroup]="form_login" (ngSubmit)="login()">
+
+        <div class="input-group">
+          <label for="email">
+            <i class="bi bi-envelope-fill"></i> Correo electrónico
+          </label>
+          <input formControlName="txtemail" type="email" id="email"
+            class="form-input" placeholder="correo@ejemplo.com"/>
+          <div class="error-msg"
+            *ngIf="form_login.get('txtemail')?.invalid && form_login.get('txtemail')?.touched">
+            Ingresa un email válido
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label for="pass">
+            <i class="bi bi-lock-fill"></i> Contraseña
+          </label>
+          <input formControlName="txtpass" type="password" id="pass"
+            class="form-input" placeholder="••••••••"/>
+          <div class="error-msg"
+            *ngIf="form_login.get('txtpass')?.invalid && form_login.get('txtpass')?.touched">
+            La contraseña es requerida
+          </div>
+        </div>
+
+        <div class="register-link">
+          ¿No tienes cuenta?
+          <a routerLink="/register-user">Regístrate aquí</a>
+        </div>
+
+        <button class="login-btn" type="submit">
+          <i class="bi bi-box-arrow-in-right"></i> Ingresar
+        </button>
+
+        <!-- DIVISOR -->
+        <div class="divider">
+          <span>o continúa con</span>
+        </div>
+
+        <!-- BOTÓN GOOGLE -->
+        <button type="button" class="btn-google" (click)="loginConGoogle()">
+          <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google"/>
+          Iniciar sesión con Google
+        </button>
+
+      </form>
+    </div>
+
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 WorldCup — Todos los derechos reservados</p>
+</footer>

@@ -1,0 +1,227 @@
+<body>
+  <header></header>
+  <main>
+    <div class="user-container">
+      <section>
+        <div class="form-section">
+          <h3>👤 Registro de Usuario</h3>
+
+          <form [formGroup]="form_resgiter_userConfig" (ngSubmit)="Onsumit()">
+            <div class="row">
+              <div class="col-md-6">
+                <label for="name">Nombre</label>
+                <input class="form-control" type="text" id="name" formControlName="txtnombre">
+              </div>
+              <div class="col-md-6">
+                <label for="pass">Password</label>
+                <input class="form-control" type="password" id="pass" formControlName="txtpass">
+              </div>
+            </div>
+
+            <div class="row mt-2">
+              <div class="col-md-6">
+                <label for="email">Email</label>
+                <input class="form-control" id="email" type="email" formControlName="txtemail">
+              </div>
+              <div class="col-md-6">
+                <label for="rol">Rol</label>
+                <select class="form-select" id="rol" formControlName="txtrol">
+                  <option value="">Seleccione</option>
+                  <option value="2">Administrador</option>
+                  <option value="1">Usuario</option>
+                </select>
+              </div>
+            </div>
+
+            <button class="btn btn-success mt-3" type="submit">Registrar</button>
+          </form>
+        </div>
+      </section>
+
+      <section>
+        <div class="table-section mt-4">
+          <h3>📋 Usuarios Registrados</h3>
+
+          <table class="table table-dark table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Fecha Creación</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let user of users; let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ user.Nombre }}</td>
+                <td>{{ user.Email }}</td>
+                <td>{{ user.Rol }}</td>
+                <td>{{ user.FECHA_CREACION | date:'dd/MM/yyyy' }}</td>
+                <td class="actions">
+                  <button class="btn btn-info btn-sm" (click)="verUsuario(user)">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn btn-warning btn-sm"
+                    data-bs-toggle="modal" data-bs-target="#exampleModal"
+                    (click)="abrirModalEditar(user)">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn btn-danger btn-sm" (click)="abrirModalEliminar(user)">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="!users || users.length === 0">
+                <td colspan="6" class="text-center text-muted py-4">
+                  No hay usuarios registrados
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <app-start></app-start>
+    </div>
+  </main>
+
+  <!-- MODAL EDITAR -->
+  <div class="modal fade" id="exampleModal" tabindex="-1"
+    aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,0.08)">
+          <h5 class="modal-title" id="exampleModalLabel">✏️ Editar Usuario</h5>
+          <button type="button" class="btn-close btn-close-white"
+            data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label>Nombre</label>
+            <input type="text" [(ngModel)]="resgiter_userConfig.Nombre" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="resgiter_userConfig.Email" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label>Rol</label>
+            <select [(ngModel)]="resgiter_userConfig.ROL" class="form-select">
+              <option value="">Seleccione</option>
+              <option value="2">Administrador</option>
+              <option value="1">Usuario</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label>Password
+              <small class="text-muted">(dejar vacío para no cambiar)</small>
+            </label>
+            <input type="password" [(ngModel)]="resgiter_userConfig.Password"
+              class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer" style="border-top:1px solid rgba(255,255,255,0.08)">
+          <button type="button" class="btn btn-secondary"
+            data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-primary"
+            (click)="guardarCambios()">Guardar cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL VER USUARIO -->
+  <div class="modal fade show d-block" *ngIf="usuarioVer"
+    style="background:rgba(0,0,0,0.5); position:fixed; inset:0; z-index:1050;">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark text-white">
+        <div class="modal-header">
+          <h5 class="modal-title">👤 Detalle del Usuario</h5>
+          <button type="button" class="btn-close btn-close-white"
+            (click)="usuarioVer = null"></button>
+        </div>
+        <div class="modal-body">
+          <div class="detalle-row">
+            <span class="detalle-label">ID</span>
+            <span class="detalle-valor">{{ usuarioVer.ID }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Nombre</span>
+            <span class="detalle-valor">{{ usuarioVer.Nombre }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Email</span>
+            <span class="detalle-valor">{{ usuarioVer.Email }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Rol</span>
+            <span class="detalle-valor">{{ usuarioVer.Rol }}</span>
+          </div>
+          <div class="detalle-row">
+            <span class="detalle-label">Fecha creación</span>
+            <span class="detalle-valor">
+              {{ usuarioVer.FECHA_CREACION | date:'dd/MM/yyyy HH:mm' }}
+            </span>
+          </div>
+          <div class="detalle-row detalle-pass">
+            <i class="bi bi-lock-fill" style="color:#ffc107; margin-right:8px;"></i>
+            <span style="color:#aaa; font-size:0.85rem;">
+              Contraseña protegida por seguridad
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" (click)="usuarioVer = null">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMAR ELIMINAR -->
+  <div class="modal fade show d-block" *ngIf="usuarioAEliminar"
+    style="background:rgba(0,0,0,0.6); position:fixed; inset:0; z-index:1060;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-dark text-white"
+        style="border:1px solid rgba(233,69,96,0.3); border-radius:14px;">
+        <div class="modal-header"
+          style="border-bottom:1px solid rgba(255,255,255,0.08);">
+          <h5 class="modal-title">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+            Confirmar eliminación
+          </h5>
+          <button type="button" class="btn-close btn-close-white"
+            (click)="usuarioAEliminar = null"></button>
+        </div>
+        <div class="modal-body text-center py-4">
+          <div style="font-size:3rem; margin-bottom:12px;">🗑️</div>
+          <p style="font-size:1rem; margin-bottom:6px;">
+            ¿Estás seguro de eliminar al usuario?
+          </p>
+          <p style="color:#00c6ff; font-weight:700; font-size:1.1rem;">
+            {{ usuarioAEliminar?.Nombre }}
+          </p>
+          <p style="color:rgba(255,255,255,0.4); font-size:0.85rem;">
+            {{ usuarioAEliminar?.Email }}
+          </p>
+          <small style="color:#f87e8a;">
+            Esta acción inactivará al usuario del sistema.
+          </small>
+        </div>
+        <div class="modal-footer"
+          style="border-top:1px solid rgba(255,255,255,0.08);">
+          <button class="btn btn-secondary"
+            (click)="usuarioAEliminar = null">
+            Cancelar
+          </button>
+          <button class="btn btn-danger" (click)="confirmarEliminar()">
+            <i class="bi bi-trash me-1"></i> Sí, eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
