@@ -7,11 +7,29 @@
     background: linear-gradient(180deg, #0b0b1f, #111);
     color: white;
     transition: all 0.4s ease;
-    overflow: hidden;
+    overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
     opacity: 0.9;
 }
 
+/* Estiliza el scrollbar para que combine con el diseño oscuro */
+.sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
 
 /* EXPANDIDO */
 .sidebar.expanded {

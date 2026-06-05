@@ -1,0 +1,127 @@
+<main>
+    <div class="user-container">
+        <section>
+            <div class="table-section mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3>🔮 Predicciones</h3>
+                    <button class="btn btn-success" (click)="abrirModal()">
+                        <i class="bi bi-plus-circle"></i> Nueva Predicción
+                    </button>
+                </div>
+
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ganador Predicho</th>
+                            <th>Confianza</th>
+                            <th>% Local</th>
+                            <th>% Empate</th>
+                            <th>% Visitante</th>
+                            <th>Modelo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let p of predicciones; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td><strong>🏆 {{ p.predictedWinner }}</strong></td>
+                            <td>
+                                <span class="badge bg-success">{{ p.confidence | number:'1.1-1' }}%</span>
+                            </td>
+                            <td>{{ p.homeWinProbability | number:'1.1-1' }}%</td>
+                            <td>{{ p.drawProbability | number:'1.1-1' }}%</td>
+                            <td>{{ p.awayWinProbability | number:'1.1-1' }}%</td>
+                            <td><span class="badge bg-secondary">{{ p.modelVersion }}</span></td>
+                            <td>
+                                <button class="btn btn-info btn-sm" (click)="verDetalle(p)">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr *ngIf="predicciones.length === 0">
+                            <td colspan="8" class="text-center text-muted py-4">No hay predicciones registradas</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <app-start></app-start>
+
+    </div>
+</main>
+
+<!-- MODAL NUEVA PREDICCIÓN -->
+<div class="modal fade show d-block" *ngIf="mostrarModal" style="background:rgba(0,0,0,0.5)">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">🔮 Nueva Predicción</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Equipo Local</label>
+                    <select class="form-select bg-dark text-white" [(ngModel)]="nuevaPrediccion.homeTeamName">
+                        <option value="" disabled>-- Selecciona --</option>
+                        <option *ngFor="let e of equipos" [value]="e.name">{{ e.name }}</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Equipo Visitante</label>
+                    <select class="form-select bg-dark text-white" [(ngModel)]="nuevaPrediccion.awayTeamName">
+                        <option value="" disabled>-- Selecciona --</option>
+                        <option *ngFor="let e of equipos" [value]="e.name">{{ e.name }}</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button class="btn btn-success" (click)="crearPrediccion()" [disabled]="cargando">
+                    {{ cargando ? 'Generando...' : 'Generar Predicción' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal fade show d-block" *ngIf="mostrarDetalle" style="background:rgba(0,0,0,0.5)">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">🏆 {{ prediccionDetalle?.predictedWinner }}</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="cerrarDetalle()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-4 text-center">
+                        <div class="fs-4 fw-bold text-success">{{ prediccionDetalle?.homeWinProbability | number:'1.1-1'
+                            }}%</div>
+                        <small>Local</small>
+                    </div>
+                    <div class="col-4 text-center">
+                        <div class="fs-4 fw-bold text-warning">{{ prediccionDetalle?.drawProbability | number:'1.1-1'
+                            }}%</div>
+                        <small>Empate</small>
+                    </div>
+                    <div class="col-4 text-center">
+                        <div class="fs-4 fw-bold text-danger">{{ prediccionDetalle?.awayWinProbability | number:'1.1-1'
+                            }}%</div>
+                        <small>Visitante</small>
+                    </div>
+                </div>
+                <hr class="border-secondary">
+                <h6 class="text-info">📝 Análisis</h6>
+                <p class="text-white-50">{{ prediccionDetalle?.reasoning }}</p>
+                <small class="text-muted">Modelo: {{ prediccionDetalle?.modelVersion }}</small>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cerrarDetalle()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

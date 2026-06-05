@@ -26,10 +26,10 @@ export class GestionRolesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.cargarUsuarios();
+    this.cargarRoles();
   }
 
-  cargarUsuarios() {
+  cargarRoles() {
     this.conexionService.GetRoles().subscribe({
       next: (data) => {
         console.log('datos roles:', data);
@@ -51,7 +51,7 @@ export class GestionRolesComponent implements OnInit {
           progressAnimation: 'increasing', positionClass: 'toast-top-right'
         });
         this.cancelarEdicion();
-        this.cargarUsuarios();
+        this.cargarRoles();
       },
       error: (error) => { this.toastr.error('❌ Ocurrió un error', error.error?.message); }
     });
@@ -85,7 +85,7 @@ export class GestionRolesComponent implements OnInit {
         this.toastr.success('✅ Usuario inactivado', '', {
           timeOut: 5000, progressBar: true, positionClass: 'toast-top-right'
         });
-        this.cargarUsuarios();
+        this.cargarRoles();
       },
       error: (error) => { this.toastr.error('❌ Ocurrió un error', error.error?.message); }
     });

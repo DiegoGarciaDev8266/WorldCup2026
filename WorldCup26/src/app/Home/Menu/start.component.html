@@ -7,29 +7,29 @@
     </div>
 
     <ul class="menu">
-        <li routerLink="/Dashboard">
-            <i class="bi bi-globe icon"></i>
+        <li routerLink="/Dashboard" (click)="toggleSub('Dash')">
+            <i class="bi bi-globe icon" ></i>
             <span class="text">Estadisticas Generales</span>
         </li>
 
-       
 
-        <li>
+
+        <li (click)="toggleSub('Table')">
             <i class="bi bi-bar-chart icon"></i>
             <span class="text">Tabla posiciones</span>
         </li>
 
-        <li>
+        <li (click)="toggleSub('Cons')">
             <i class="bi bi-calendar icon"></i>
             <span class="text">Consulta partidos</span>
         </li>
 
-        <li>
+        <li (click)="toggleSub('Vivo')">
             <i class="bi bi-broadcast icon"></i>
             <span class="text">En vivo</span>
         </li>
 
-        <li>
+        <li (click)="toggleSub('Envet')">
             <i class="bi bi-pencil-square icon"></i>
             <span class="text">Eventos en vivo</span>
         </li>
@@ -40,13 +40,15 @@
             <span class="text">Predicciones <i class="bi bi-caret-down-fill"></i></span>
         </li>
 
-        <ul *ngIf="subMenu.pred" class="submenu">
-            <li>Ganador partido</li>
-            <li>Campeón torneo</li>
-            <li>Explicación</li>
+        <ul *ngIf="subMenu.pred" class="submenu" onclick="toggleSidebar()">
+            <li routerLink="/Prediction_teams">Equipos</li>
+            <li routerLink="/Prediction_teams-statistics">Estadisticas Equipos</li>
+            <li routerLink="/Matches">Partidos</li>
+            <li routerLink="/predictions">Prediciones</li> 
+
         </ul>
 
-         <!-- CONFIG -->
+        <!-- CONFIG -->
         <li (click)="toggleSub('config')">
             <i class="bi bi-gear icon"></i>
             <span class="text">Configuración <i class="bi bi-caret-down-fill"></i> </span>

@@ -1,0 +1,117 @@
+<main>
+    <div class="user-container">
+        <section>
+            <div class="table-section mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h3>⚽ Partidos Registrados</h3>
+                    <button class="btn btn-success" (click)="abrirModal()">
+                        <i class="bi bi-plus-circle"></i> Nuevo Partido
+                    </button>
+                </div>
+
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Local</th>
+                            <th>Marcador</th>
+                            <th>Visitante</th>
+                            <th>Estado</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let m of matches; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td><strong>{{ m.homeTeam }}</strong></td>
+                            <td>
+                                <span class="badge bg-secondary fs-6">
+                                    {{ m.homeScore }} - {{ m.awayScore }}
+                                </span>
+                            </td>
+                            <td><strong>{{ m.awayTeam }}</strong></td>
+                            <td>
+                                <span [ngClass]="{
+                'badge bg-success': m.status === 'FINISHED',
+                'badge bg-warning text-dark': m.status === 'SCHEDULED',
+                'badge bg-danger': m.status === 'CANCELLED'
+              }">{{ m.status }}</span>
+                            </td>
+                            <td>{{ m.matchDate | date:'dd/MM/yyyy HH:mm' }}</td>
+                        </tr>
+                        <tr *ngIf="matches.length === 0">
+                            <td colspan="6" class="text-center text-muted py-4">No hay partidos registrados</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        <app-start></app-start>
+
+    </div>
+</main>
+
+<!-- MODAL CREAR PARTIDO -->
+<div class="modal fade show d-block" *ngIf="mostrarModal" style="background:rgba(0,0,0,0.5)">
+    <div class="modal-dialog">
+        <div class="modal-content bg-dark text-white">
+            <div class="modal-header">
+                <h5 class="modal-title">⚽ Nuevo Partido</h5>
+                <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+            </div>
+            <div class="modal-body">
+
+                <div class="mb-3">
+                    <label class="form-label">Equipo Local</label>
+                    <select class="form-select bg-dark text-white" [(ngModel)]="nuevoMatch.homeTeamId">
+                        <option [value]="null" disabled>-- Selecciona --</option>
+                        <option *ngFor="let e of equipos" [value]="e.id">{{ e.name }}</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Equipo Visitante</label>
+                    <select class="form-select bg-dark text-white" [(ngModel)]="nuevoMatch.awayTeamId">
+                        <option [value]="null" disabled>-- Selecciona --</option>
+                        <option *ngFor="let e of equipos" [value]="e.id">{{ e.name }}</option>
+                    </select>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="form-label">Goles Local</label>
+                        <input type="number" class="form-control bg-dark text-white" [(ngModel)]="nuevoMatch.homeScore"
+                            min="0" />
+                    </div>
+                    <div class="col">
+                        <label class="form-label">Goles Visitante</label>
+                        <input type="number" class="form-control bg-dark text-white" [(ngModel)]="nuevoMatch.awayScore"
+                            min="0" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Estado</label>
+                    <select class="form-select bg-dark text-white" [(ngModel)]="nuevoMatch.status">
+                        <option value="SCHEDULED">SCHEDULED</option>
+                        <option value="FINISHED">FINISHED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Fecha del partido</label>
+                    <input type="datetime-local" class="form-control bg-dark text-white"
+                        [(ngModel)]="nuevoMatch.matchDate" />
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" (click)="cerrarModal()">Cancelar</button>
+                <button class="btn btn-success" (click)="crearMatch()" [disabled]="cargando">
+                    {{ cargando ? 'Guardando...' : 'Guardar' }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

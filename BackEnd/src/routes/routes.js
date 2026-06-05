@@ -19,6 +19,7 @@ const sql = require("mssql"); //
 //   return hash;
 // };
 
+// FUNCION PARA ENCRIPTACION CONTRASEÑA
 async function encriptarContrasena(password) {
   // Si password es undefined o null, lanzamos un error claro
   if (!password) {
@@ -30,12 +31,43 @@ async function encriptarContrasena(password) {
   return hash;
 }
 
+// FUNCION PARA VERIFICAR CONTRASEÑA
 async function verificarContrasena(passwordIngresada, hashGuardado) {
   const coincide = await bcrypt.compare(passwordIngresada, hashGuardado);
   return coincide;
 };
 
-// LOGIN 
+// GENERACION DE TOKEN 
+function verifyToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+
+  // Debe venir en formato: Bearer token
+  if (!authHeader) {
+    return res.status(403).json({ message: "No se proporcionó un token" });
+  }
+
+  const token = authHeader.split(' ')[1]; // separar "Bearer" y el token real
+
+  if (!token) {
+    return res.status(403).json({ message: "Token inválido" });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY); // verifica el token
+    req.user = decoded; // guardamos la info del usuario en la request
+    next(); // pasar a la siguiente función
+  } catch (error) {
+    return res.status(401).json({ message: "Token no válido o expirado" });
+  }
+}
+module.exports = verifyToken;
+
+
+
+
+///////// PAGINA DE INICO  /////////
+
+// login pagina de inicio
 router.post('/UserAutenticar', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -50,15 +82,15 @@ router.post('/UserAutenticar', async (req, res) => {
     request.input('email', sql.VarChar, email);
 
     const result = await request.query(`
-      SELECT * FROM TABLA_USUARIOS WHERE email = @email
+      SELECT * FROM TABLA_USUARIOS WHERE email = email
     `);
 
     if (result.recordset.length === 0) {
       return res.status(401).json({ message: "Usuario no encontrado" });
     }
-    // console.log("BODY:", req.body);
-    // console.log("EMAIL:", email);
-    // console.log("PASSWORD:", password);
+    //console.log("BODY:", req.body);
+    //console.log("EMAIL:", email);
+    //console.log("PASSWORD:", password);
 
     const user = result.recordset[0];
     console.log("USER DB:", user);
@@ -100,36 +132,7 @@ router.post('/UserAutenticar', async (req, res) => {
   }
 });
 
-
-
-//module.exports = router;
-
-
-function verifyToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-
-  // Debe venir en formato: Bearer token
-  if (!authHeader) {
-    return res.status(403).json({ message: "No se proporcionó un token" });
-  }
-
-  const token = authHeader.split(' ')[1]; // separar "Bearer" y el token real
-
-  if (!token) {
-    return res.status(403).json({ message: "Token inválido" });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.SECRET_KEY); // verifica el token
-    req.user = decoded; // guardamos la info del usuario en la request
-    next(); // pasar a la siguiente función
-  } catch (error) {
-    return res.status(401).json({ message: "Token no válido o expirado" });
-  }
-}
-module.exports = verifyToken;
-
-// Regsitro de usuario
+// Registro de usuario pagina de inicio
 router.post("/userResgiter", async (req, res) => {
   try {
     // 1. Extraemos 'password' del JSON que envía el cliente
@@ -168,7 +171,11 @@ router.post("/userResgiter", async (req, res) => {
 });
 
 
-////MODULO DE CONFIGURACION 
+
+
+///////  MODULO DE CONFIGURACION ////////
+
+// GESTION  DE USUARIOS
 
 // Regsitro de usuario Configuracion
 router.post("/ResgiterUserConfig", async (req, res) => {
@@ -210,7 +217,6 @@ router.post("/ResgiterUserConfig", async (req, res) => {
   console.log(req.body);
 });
 
-
 // mostrar usuarios Configuracion
 router.get("/GetUserConfig", async (req, res) => {
   try {
@@ -224,7 +230,8 @@ router.get("/GetUserConfig", async (req, res) => {
       US.FECHA_CREACION
     FROM TABLA_USUARIOS US 
     INNER JOIN TABLA_ROLES R 
-      ON US.ROL = R.ID;`;
+      ON US.ROL = R.ID
+    WHERE US.ESTADO = 'ACT';`;
 
     const request = new sql.Request();
 
@@ -239,6 +246,7 @@ router.get("/GetUserConfig", async (req, res) => {
   }
 });
 
+/// Actualizacion de usuario
 router.put("/UpdateUserConfig", async (req, res) => {
   try {
     const { ID, Nombre, Email, Password, ROL } = req.body;
@@ -281,75 +289,6 @@ router.put("/UpdateUserConfig", async (req, res) => {
   //console.log(req.body);
 });
 
-//Obtener el rol
-router.get("/GetRoles", async (req, res) => {
-  try {
-    const request = new sql.Request();
-    const result = await request.query(`
-      SELECT 
-        U.ID,
-        U.NOMBRE,
-        U.EMAIL,
-        R.NOMBRE_ROL,
-        U.DESCRIPCION,
-        U.FECHA_CREACION,
-        U.ESTADO,
-        R.USUARIO_CREACION
-      FROM TABLA_USUARIOS U
-      INNER JOIN TABLA_ROLES R ON U.ROL = R.ID
-    `);
-    res.json(result.recordset);
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Error al obtener roles" });
-  }
-});
-
-// GESTIÓN DE ROLES - Actualizar rol de usuario
-router.put("/UpdateRolUsuario", async (req, res) => {
-  try {
-    const { EMAIL, NOMBRE_ROL, DESCRIPCION, ESTADO } = req.body;
-
-    if (!EMAIL || !NOMBRE_ROL) {
-      return res.status(400).json({ message: "EMAIL y NOMBRE_ROL son requeridos" });
-    }
-
-    // Buscar ID del rol por nombre
-    const requestRol = new sql.Request();
-    requestRol.input('NOMBRE_ROL', sql.VarChar, NOMBRE_ROL);
-    const rolResult = await requestRol.query(`
-      SELECT ID FROM TABLA_ROLES WHERE NOMBRE_ROL = @NOMBRE_ROL
-    `);
-
-    if (rolResult.recordset.length === 0) {
-      return res.status(404).json({ message: "Rol no encontrado" });
-    }
-
-    const rolID = rolResult.recordset[0].ID;
-
-    // Actualizar en TABLA_USUARIOS
-    const request = new sql.Request();
-    request.input('EMAIL', sql.VarChar, EMAIL);
-    request.input('ROL', sql.Int, rolID);
-    request.input('ESTADO', sql.VarChar, ESTADO || 'ACT');
-    request.input('DESCRIPCION', sql.VarChar, DESCRIPCION || '');
-
-    await request.query(`
-      UPDATE TABLA_USUARIOS 
-      SET ROL = @ROL,
-          ESTADO = @ESTADO,
-          DESCRIPCION = @DESCRIPCION
-      WHERE EMAIL = @EMAIL
-    `);
-
-    res.json({ message: "Rol actualizado correctamente" });
-
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Error al actualizar rol" });
-  }
-});
-
 //Inactivar el usuario
 router.put("/InactivarUsuario", async (req, res) => {
   try {
@@ -376,7 +315,86 @@ router.put("/InactivarUsuario", async (req, res) => {
   }
 });
 
-//Get de Selecciones
+
+
+
+
+// GESTIÓN DE ROLES 
+
+// mostrar Roles
+router.get("/GetRoles", async (req, res) => {
+  try {
+    const request = new sql.Request();
+    const result = await request.query(`
+      SELECT 
+        U.NOMBRE,
+        U.EMAIL,
+        R.NOMBRE_ROL,
+        R.DESCRIPCION,
+        U.FECHA_CREACION,
+        U.ESTADO,
+        R.USUARIO_CREACION
+      FROM TABLA_USUARIOS U
+      INNER JOIN TABLA_ROLES R ON U.ROL = R.ID
+    `);
+    res.json(result.recordset);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Error al obtener roles" });
+  }
+});
+
+// Actualizar roles
+router.put("/UpdateRolUsuario", async (req, res) => {
+  try {
+    const { EMAIL, NOMBRE_ROL, ESTADO } = req.body;
+
+    if (!EMAIL || !NOMBRE_ROL) {
+      return res.status(400).json({ message: "EMAIL y NOMBRE_ROL son requeridos" });
+    }
+
+    // Buscar ID del rol por nombre
+    const requestRol = new sql.Request();
+    requestRol.input('NOMBRE_ROL', sql.VarChar, NOMBRE_ROL);
+    const rolResult = await requestRol.query(`
+      SELECT ID FROM TABLA_ROLES WHERE NOMBRE_ROL = @NOMBRE_ROL
+    `);
+
+    if (rolResult.recordset.length === 0) {
+      return res.status(404).json({ message: "Rol no encontrado" });
+    }
+
+    const rolID = rolResult.recordset[0].ID;
+
+    // Actualizar en TABLA_USUARIOS
+    const request = new sql.Request();
+    request.input('EMAIL', sql.VarChar, EMAIL);
+    request.input('ROL', sql.Int, rolID);
+    request.input('ESTADO', sql.VarChar, ESTADO || 'ACT');
+    // request.input('DESCRIPCION', sql.VarChar, DESCRIPCION || '');
+
+    await request.query(`
+      UPDATE TABLA_USUARIOS 
+      SET ROL = @ROL,
+          ESTADO = @ESTADO
+      WHERE EMAIL = @EMAIL
+    `);
+
+    res.json({ message: "Rol actualizado correctamente" });
+
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Error al actualizar rol" });
+  }
+});
+
+
+
+
+
+///////// SECCION DE EQUIPOS /////////////
+
+//  Mostrar equipos 
 router.get("/GetEquipos", async (req, res) => {
   try {
     const request = new sql.Request();
@@ -397,7 +415,7 @@ router.get("/GetEquipos", async (req, res) => {
   }
 });
 
-//POST registrar equipo
+// registrar equipo
 router.post("/RegistrarEquipo", async (req, res) => {
   try {
     const { NombreEquipo, EscudoURL, Grupo, Estado } = req.body;
@@ -425,7 +443,7 @@ router.post("/RegistrarEquipo", async (req, res) => {
   }
 });
 
-//PUT actualizar equipo
+// actualizar equipo
 router.put("/ActualizarEquipo", async (req, res) => {
   try {
     const { EquipoID, NombreEquipo, EscudoURL, Grupo, Estado } = req.body;
@@ -458,7 +476,7 @@ router.put("/ActualizarEquipo", async (req, res) => {
   }
 });
 
-//DELETE eliminar equipo
+// eliminar equipo
 router.delete("/EliminarEquipo/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -482,7 +500,38 @@ router.delete("/EliminarEquipo/:id", async (req, res) => {
   }
 });
 
-//GET partidos
+//Inactivar el usuario
+router.put("/InactivarEquipo", async (req, res) => {
+  try {
+    const { NombreEquipo } = req.body;
+
+    if (!NombreEquipo) {
+      return res.status(400).json({ message: "Nombre Equipo es requerido" });
+    }
+
+    const request = new sql.Request();
+    request.input('NombreEquipo', sql.VarChar, NombreEquipo);
+
+    await request.query(`
+      UPDATE TBL_EQUIPOS 
+      SET ESTADO = 'INA'
+      WHERE NombreEquipo = @NombreEquipo
+    `);
+
+    res.json({ message: "Equipo inactivo correctamente" });
+
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ message: "Error al inactivar usuario" });
+  }
+});
+
+
+
+
+///////// SECCION DE PARTIDOS /////////////
+
+// Mostrar partidos
 router.get("/GetPartidos", async (req, res) => {
   try {
     const request = new sql.Request();
@@ -511,7 +560,7 @@ router.get("/GetPartidos", async (req, res) => {
   }
 });
 
-//POST Registrarpartidos
+// registrar partidos
 router.post("/RegistrarPartido", async (req, res) => {
   try {
     const { 
@@ -550,7 +599,7 @@ router.post("/RegistrarPartido", async (req, res) => {
   }
 });
 
-//PUT ActualizarPartido
+// Actualizar Partido
 router.put("/ActualizarPartido", async (req, res) => {
   try {
     const { 
@@ -590,7 +639,7 @@ router.put("/ActualizarPartido", async (req, res) => {
   }
 });
 
-//DELETE EliminarPartido
+// Eliminar Partido
 router.delete("/EliminarPartido/:id", async (req, res) => {
   try {
     const { id } = req.params;
@@ -609,6 +658,12 @@ router.delete("/EliminarPartido/:id", async (req, res) => {
     res.status(500).json({ message: "Error al eliminar partido" });
   }
 });
+
+
+
+
+
+///////// SECCION DE PARTIDOS FINALIZADOS /////////////
 
 //GET/GetPartidosFinalizados
 router.get("/GetPartidosFinalizados", async (req, res) => {
@@ -639,6 +694,9 @@ router.get("/GetPartidosFinalizados", async (req, res) => {
     res.status(500).json({ message: "Error al obtener partidos finalizados" });
   }
 });
+
+
+///////// SECCION DE RESULTADOS /////////////
 
 //PUT/RegistrarResultado
 router.put("/RegistrarResultado", async (req, res) => {
@@ -782,6 +840,9 @@ router.put("/RegistrarResultado", async (req, res) => {
   }
 });
 
+
+///////// SECCION DE TABLA POSICIONES /////////////
+
 //GET TablaPosiciones
 router.get("/GetTablaPosiciones", async (req, res) => {
   try {
@@ -810,6 +871,10 @@ router.get("/GetTablaPosiciones", async (req, res) => {
     res.status(500).json({ message: "Error al obtener tabla de posiciones" });
   }
 });
+
+
+
+///////// SECCION DE AUDITORIA /////////////
 
 //GET Auditoria
 router.get("/GetLogAuditoria", async (req, res) => {

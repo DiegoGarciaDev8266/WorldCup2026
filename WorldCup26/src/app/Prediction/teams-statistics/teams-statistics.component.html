@@ -1,0 +1,67 @@
+<main>
+    <div class="user-container">
+        <section>
+            <div class="table-section mt-4">
+                <h3>📊 Estadísticas por Equipo</h3>
+
+                <!-- SELECT DE EQUIPOS -->
+                <div class="mb-4 w-25">
+                    <label class="form-label text-white">Selecciona un equipo</label>
+                    <select class="form-select bg-dark text-white" 
+                     [(ngModel)]="equipoSeleccionadoId" (change)="onEquipoChange()">
+                        <option [value]="null" disabled>-- Elige un equipo --</option>
+                        <option *ngFor="let e of equipos" [value]="e.id">
+                            {{ e.name }} — {{ e.country }}
+                        </option>
+                    </select>
+
+                </div>
+
+                <!-- CARGANDO -->
+                <div *ngIf="cargando" class="text-center text-muted py-3">
+                    Cargando estadísticas...
+                </div>
+
+                <!-- ESTADÍSTICAS -->
+                <div *ngIf="estadisticas && !cargando">
+                    <h5 class="text-white mb-3">🏆 {{ estadisticas.teamName }}</h5>
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>Partidos</th>
+                                <th>Victorias</th>
+                                <th>Empates</th>
+                                <th>Derrotas</th>
+                                <th>Goles a favor</th>
+                                <th>Goles en contra</th>
+                                <th>Win Rate</th>
+                                <th>Promedio goles</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{ estadisticas.matchesPlayed }}</td>
+                                <td><span class="badge bg-success">{{ estadisticas.wins }}</span></td>
+                                <td><span class="badge bg-warning text-dark">{{ estadisticas.draws }}</span></td>
+                                <td><span class="badge bg-danger">{{ estadisticas.losses }}</span></td>
+                                <td>{{ estadisticas.goalsFor }}</td>
+                                <td>{{ estadisticas.goalsAgainst }}</td>
+                                <td>{{ estadisticas.winRate }}%</td>
+                                <td>{{ estadisticas.avgGoals }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- SIN DATOS -->
+                <div *ngIf="!estadisticas && !cargando && equipoSeleccionadoId">
+                    <p class="text-muted text-center py-4">No hay estadísticas para este equipo</p>
+                </div>
+
+            </div>
+        </section>
+        <app-start></app-start>
+
+    </div>
+
+</main>

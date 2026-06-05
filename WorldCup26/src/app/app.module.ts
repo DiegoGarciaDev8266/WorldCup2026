@@ -22,6 +22,10 @@ import { GestionSeleccionesComponent } from './Configuration/gestion-selecciones
 import { ProgramacionCalendarioComponent } from './Configuration/programacion-calendario/programacion-calendario.component';
 import { RegistroResultadosComponent } from './Configuration/registro-resultados/registro-resultados.component';
 import { CommonModule } from '@angular/common';
+import { TeamsComponent } from './Prediction/teams/teams.component';
+import { TeamsStatisticsComponent } from './Prediction/teams-statistics/teams-statistics.component';
+import { MatchesComponent } from './Prediction/matches/matches.component';
+import { PredictionsComponent } from './Prediction/predictions/predictions.component';
 
 
 @NgModule({
@@ -35,7 +39,12 @@ import { CommonModule } from '@angular/common';
     GestionRolesComponent,
     GestionSeleccionesComponent,
     ProgramacionCalendarioComponent,
-    RegistroResultadosComponent
+    RegistroResultadosComponent,
+    TeamsComponent,
+    TeamsStatisticsComponent,
+    MatchesComponent,
+    PredictionsComponent
+    
     
     
   ],
@@ -48,7 +57,7 @@ import { CommonModule } from '@angular/common';
     CommonModule,
     BrowserAnimationsModule, // Requerido
     ToastrModule.forRoot(), // Configuración global
-     FormsModule 
+    FormsModule 
     
     
   ],

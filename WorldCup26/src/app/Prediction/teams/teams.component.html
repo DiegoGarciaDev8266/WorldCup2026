@@ -1,0 +1,75 @@
+<body>
+    <main>
+        <div class="user-container">
+
+            <!-- TABLA -->
+            <section>
+                <div class="table-section mt-4">
+                    <h3>🌍 Selecciones Registradas</h3>
+
+                    <div class="mb-3">
+                        <input class="form-control w-25" placeholder="🔍 Buscar equipo o grupo..." />
+                    </div>
+
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Equipo</th>
+                                <th>Pais</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let e of equiposFiltrados; let i = index">
+                                <td>{{ i + 1 }}</td>
+                                <td><strong>{{ e.name }}</strong></td> <!-- ← era e.NombreEquipo -->
+                                <td><span class="badge bg-primary">{{ e.country }}</span></td> <!-- ← era e.Grupo -->
+                                <td class="actions">
+                                    <button class="btn btn-info btn-sm" (click)="verDetalle(e)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="equiposFiltrados.length === 0">
+                                <td colspan="6" class="text-center text-muted py-4">No se encontraron equipos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+            <app-start></app-start>
+        </div>
+    </main>
+
+    <!-- MODAL VER DETALLE -->
+    <div class="modal fade show d-block" *ngIf="mostrarModal" style="background:rgba(0,0,0,0.5)">
+        <div class="modal-dialog">
+            <div class="modal-content bg-dark text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title mb-0">{{ equipoSeleccionado?.name }}</h5>
+                    <button type="button" class="btn-close btn-close-white" (click)="cerrarModal()"></button>
+                </div>
+                <div class="modal-body">
+                    <table class="table table-dark table-sm">
+                        <tr>
+                            <td><strong>Codigo</strong></td>
+                            <td>{{ equipoSeleccionado?.id }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Equipo</strong></td>
+                            <td>{{ equipoSeleccionado?.name }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>País</strong></td>
+                            <td>{{ equipoSeleccionado?.country }}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" (click)="cerrarModal()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

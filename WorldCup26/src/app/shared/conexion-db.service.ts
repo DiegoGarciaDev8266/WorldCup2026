@@ -15,13 +15,21 @@ export class ConexionDBService {
 
   constructor(private http: HttpClient, private router: Router) { }
 
+
+  //// PAGINA DE INICIO  ///
+
+  //registro usuario pagina de inicio
   RegistroUsuario(id: register_userMoldel ){
     return this.http.post<string>(`${this.BASE_URL_SQL}/cup/userResgiter`, id)
   }
 
+  //obtencion de losgin pagina de inicio
    obtenerLogin(id: loginMoldel)  {
     return this.http.post<loginMoldel[]>(`${this.BASE_URL_SQL}/cup/UserAutenticar`, id);
   }
+
+
+
 
   // SECCION GESTION DE ROLES
   GetRoles() {
@@ -37,6 +45,9 @@ export class ConexionDBService {
   }
 
 
+
+
+
   // SECCION CONFIGURACION
   RegistroUsuarioConfig(id: register_userConfigMoldel){
     return this.http.post<string>(`${this.BASE_URL_SQL}/cup/ResgiterUserConfig`, id)
@@ -47,6 +58,10 @@ export class ConexionDBService {
   actualizarUsuario(id: any) {
   return this.http.put(`${this.BASE_URL_SQL}/cup/UpdateUserConfig`, id);
   }
+
+
+
+
 
   // SECCION EQUIPOS
   GetEquipos() {
@@ -61,6 +76,13 @@ export class ConexionDBService {
   EliminarEquipo(id: number) {
     return this.http.delete(`${this.BASE_URL_SQL}/cup/EliminarEquipo/${id}`);
   }
+  InactivarEquipo(id: any) {
+    return this.http.put(`${this.BASE_URL_SQL}/cup/InactivarEquipo`, id);
+  }
+
+
+
+
 
   // SECCION PARTIDOS
   GetPartidos() {
@@ -78,6 +100,11 @@ export class ConexionDBService {
   EliminarPartido(id: number) {
     return this.http.delete(`${this.BASE_URL_SQL}/cup/EliminarPartido/${id}`);
   }
+
+
+
+
+
 
   // SECCION RESULTADOS
   GetPartidosFinalizados() {
