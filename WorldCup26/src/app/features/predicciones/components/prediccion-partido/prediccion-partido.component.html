@@ -1,0 +1,161 @@
+<div class="pred-container">
+
+  <div class="pred-header">
+    <div class="pred-header-left">
+      <img src="assets/Logo.png" alt="Logo" class="pred-logo"/>
+      <div>
+        <h2>Predicción de Partido</h2>
+        <span class="pred-subtitle">FIFA World Cup 2026 — Powered by OpenAI</span>
+      </div>
+    </div>
+    <div class="pred-badge">
+      🤖 IA Predictiva
+    </div>
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="pred-card">
+    <h4>⚽ Selecciona los equipos</h4>
+
+    <div class="pred-form">
+      <div class="pred-select-group">
+        <label>Equipo Local</label>
+        <div class="pred-loading-eq" *ngIf="cargandoEquipos">
+          <div class="spinner-sm"></div>
+          <span>Cargando equipos...</span>
+        </div>
+        <select *ngIf="!cargandoEquipos"
+          class="pred-select"
+          [(ngModel)]="equipoLocal">
+          <option value="">Selecciona equipo local</option>
+          <option *ngFor="let e of equipos"
+            [value]="e.name"
+            [disabled]="e.name === equipoVisitante">
+            {{ e.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="pred-vs">VS</div>
+
+      <div class="pred-select-group">
+        <label>Equipo Visitante</label>
+        <select *ngIf="!cargandoEquipos"
+          class="pred-select"
+          [(ngModel)]="equipoVisitante">
+          <option value="">Selecciona equipo visitante</option>
+          <option *ngFor="let e of equipos"
+            [value]="e.name"
+            [disabled]="e.name === equipoLocal">
+            {{ e.name }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="pred-actions">
+      <button class="btn-predecir"
+        (click)="predecir()"
+        [disabled]="cargando || !equipoLocal || !equipoVisitante">
+        <span *ngIf="!cargando">🔮 Predecir resultado</span>
+        <span *ngIf="cargando">
+          <span class="spinner-sm-inline"></span>
+          Analizando...
+        </span>
+      </button>
+      <button class="btn-limpiar" *ngIf="resultado" (click)="limpiar()">
+        🔄 Nueva predicción
+      </button>
+    </div>
+  </div>
+
+  <!-- RESULTADO -->
+  <div class="pred-resultado" *ngIf="resultado">
+
+    <div class="resultado-header">
+      <h3>📊 Resultado de la Predicción</h3>
+    </div>
+
+    <!-- MARCADOR PREDICTIVO -->
+    <div class="resultado-marcador">
+      <div class="equipo-pred" [class.ganador]="resultado.predictedWinner?.name === equipoLocal">
+        <div class="equipo-nombre">{{ equipoLocal }}</div>
+        <div class="equipo-prob">
+          {{ resultado.homeWinProbability | number:'1.1-1' }}%
+        </div>
+        <div class="equipo-label">Local</div>
+      </div>
+
+      <div class="resultado-centro">
+        <div class="ganador-badge">
+          🏆 {{ resultado.predictedWinner?.name }}
+        </div>
+        <div class="confianza-label">
+          Confianza: <strong>{{ resultado.confidence | number:'1.1-1' }}%</strong>
+        </div>
+        <div class="empate-prob">
+          Empate: {{ resultado.drawProbability | number:'1.1-1' }}%
+        </div>
+      </div>
+
+      <div class="equipo-pred" [class.ganador]="resultado.predictedWinner?.name === equipoVisitante">
+        <div class="equipo-nombre">{{ equipoVisitante }}</div>
+        <div class="equipo-prob">
+          {{ resultado.awayWinProbability | number:'1.1-1' }}%
+        </div>
+        <div class="equipo-label">Visitante</div>
+      </div>
+    </div>
+
+    <!-- BARRAS DE PROBABILIDAD -->
+    <div class="prob-barras">
+      <div class="prob-barra-row">
+        <span class="prob-equipo">{{ equipoLocal }}</span>
+        <div class="prob-barra-bg">
+          <div class="prob-barra-fill local"
+            [style.width.%]="resultado.homeWinProbability">
+          </div>
+        </div>
+        <span class="prob-pct">{{ resultado.homeWinProbability | number:'1.1-1' }}%</span>
+      </div>
+      <div class="prob-barra-row">
+        <span class="prob-equipo">Empate</span>
+        <div class="prob-barra-bg">
+          <div class="prob-barra-fill empate"
+            [style.width.%]="resultado.drawProbability">
+          </div>
+        </div>
+        <span class="prob-pct">{{ resultado.drawProbability | number:'1.1-1' }}%</span>
+      </div>
+      <div class="prob-barra-row">
+        <span class="prob-equipo">{{ equipoVisitante }}</span>
+        <div class="prob-barra-bg">
+          <div class="prob-barra-fill visitante"
+            [style.width.%]="resultado.awayWinProbability">
+          </div>
+        </div>
+        <span class="prob-pct">{{ resultado.awayWinProbability | number:'1.1-1' }}%</span>
+      </div>
+    </div>
+
+    <!-- BOTÓN EXPLICACIÓN -->
+    <div class="explicacion-toggle">
+      <button class="btn-explicacion"
+        (click)="mostrarExplicacion = !mostrarExplicacion">
+        <i class="bi" [class.bi-chevron-down]="!mostrarExplicacion"
+          [class.bi-chevron-up]="mostrarExplicacion"></i>
+        {{ mostrarExplicacion ? 'Ocultar explicación' : '🧠 Ver explicación de la IA' }}
+      </button>
+    </div>
+
+    <div class="explicacion-box" *ngIf="mostrarExplicacion">
+      <div class="explicacion-header">
+        <span>🤖 Análisis de OpenAI</span>
+      </div>
+      <p class="explicacion-texto">{{ resultado.reasoning }}</p>
+    </div>
+
+  </div>
+
+  <app-start></app-start>
+</div>

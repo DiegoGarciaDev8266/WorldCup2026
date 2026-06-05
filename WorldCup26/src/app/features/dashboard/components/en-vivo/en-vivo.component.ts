@@ -3,6 +3,7 @@ import { Subject, interval } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApiService } from '../../../../core/services/api.service';
 import { SimulacionService, EventoPartido, EstadoPartido } from '../../services/simulacion.service';
+import { SocketService } from '../../../../core/services/socket.service';
 
 @Component({
   selector: 'app-en-vivo',
@@ -17,7 +18,6 @@ export class EnVivoComponent implements OnInit, OnDestroy {
   cargando = true;
   tabActiva: 'vivo' | 'proximos' = 'vivo';
 
-  // Estado del partido activo
   eventos: EventoPartido[] = [];
   minutoActual = 0;
   golesLocal = 0;
@@ -31,23 +31,18 @@ export class EnVivoComponent implements OnInit, OnDestroy {
 
   constructor(
     private api: ApiService,
-    public simulacionService: SimulacionService
+    public simulacionService: SimulacionService,
+    private socketService: SocketService
   ) {}
 
   ngOnInit(): void {
     this.cargarPartidosEnVivo();
     this.cargarProximosPartidos();
+    this.suscribirseASimulacion();
+    this.suscribirseAWebSockets();
 
-    // Suscribirse a cambios de estado de todos los partidos
-    this.simulacionService.estados$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        if (this.partidoActivo) {
-          this.actualizarEstadoActivo();
-        }
-      });
-
-    interval(10000)
+    // Polling de respaldo cada 30 segundos
+    interval(30000)
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.cargarPartidosEnVivo());
 
@@ -59,7 +54,26 @@ export class EnVivoComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
-    // NO resetear al destruir — el servicio Singleton mantiene el estado
+  }
+
+  suscribirseAWebSockets() {
+    // Cuando el backend notifica que un partido inició
+    this.socketService.partidoIniciado$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        console.log('⚽ Partido iniciado via WebSocket');
+        this.cargarPartidosEnVivo();
+      });
+  }
+
+  suscribirseASimulacion() {
+    this.simulacionService.estados$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (this.partidoActivo) {
+          this.actualizarEstadoActivo();
+        }
+      });
   }
 
   actualizarEstadoActivo() {
@@ -78,11 +92,9 @@ export class EnVivoComponent implements OnInit, OnDestroy {
       next: (data: any[]) => {
         this.partidosEnVivo = data;
         if (data.length > 0) {
-          // Seleccionar primer partido si no hay activo
           if (!this.partidoActivo) {
             this.partidoActivo = data[0];
           }
-          // Iniciar simulación para cada partido en vivo que no esté corriendo
           data.forEach(p => {
             if (!this.simulacionService.estaSimulando(p.PartidoID)) {
               this.simulacionService.iniciarSimulacion(p);
@@ -130,7 +142,7 @@ export class EnVivoComponent implements OnInit, OnDestroy {
   }
 
   seleccionarPartido(p: any) {
-    // Solo cambiar partido activo — NO resetear
+    if (this.partidoActivo?.PartidoID === p.PartidoID) return;
     this.partidoActivo = p;
     this.actualizarEstadoActivo();
   }
@@ -139,10 +151,12 @@ export class EnVivoComponent implements OnInit, OnDestroy {
     return Math.min((this.minutoActual / 90) * 100, 100);
   }
 
-  getIconoEvento(tipo: string): string {
+    getIconoEvento(tipo: string): string {
     const iconos: any = {
       'GOL':             '⚽',
-      'PENALTI':         '🥅',
+      'PENALTI':         '🟡',  // señalamiento
+      'PENALTI_GOL':     '⚽🥅', // convertido
+      'PENALTI_FALLADO': '❌🥅', // fallado
       'TARJETA_AMARILLA':'🟨',
       'TARJETA_ROJA':    '🟥',
       'FALTA':           '⚠️',
@@ -161,7 +175,9 @@ export class EnVivoComponent implements OnInit, OnDestroy {
   getClaseEvento(tipo: string): string {
     const clases: any = {
       'GOL':             'evento-gol',
-      'PENALTI':         'evento-gol',
+      'PENALTI':         'evento-amarilla',  // señalamiento en amarillo
+      'PENALTI_GOL':     'evento-gol',       // convertido en verde
+      'PENALTI_FALLADO': 'evento-normal',    // fallado neutro
       'TARJETA_AMARILLA':'evento-amarilla',
       'TARJETA_ROJA':    'evento-roja',
       'MEDIO_TIEMPO':    'evento-tiempo',

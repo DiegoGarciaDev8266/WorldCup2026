@@ -6,7 +6,7 @@ const estadisticaService = require('./estadistica.service');
 const schedulerService = {
 
   iniciar() {
-    console.log('⏰ Scheduler iniciado');
+    console.log('Scheduler iniciado');
     cron.schedule('* * * * *', async () => {
       await this.verificarPartidosParaIniciar();
     });
@@ -33,28 +33,35 @@ const schedulerService = {
       }
 
     } catch (error) {
-      console.error('❌ Error en scheduler:', error);
+      console.error('Error en scheduler:', error);
     }
   },
 
-  async iniciarPartido(partido) {
+    async iniciarPartido(partido) {
     try {
       const request = new sql.Request();
       request.input('PartidoID', sql.Int, partido.PartidoID);
       await request.query(`
-        UPDATE TBL_PARTIDOS 
+        UPDATE TBL_PARTIDOS
         SET Estado_Juego = 'En curso',
             GolesLocal = 0,
             GolesVisitante = 0
         WHERE PartidoID = @PartidoID
       `);
 
-      // Inicializar estadísticas
       await estadisticaService.inicializar(
         partido.PartidoID,
         partido.EquipoLocalID,
         partido.EquipoVisitanteID
       );
+
+      // Emitir evento de partido iniciado
+      const { io } = require('../../index');
+      io.emit('partido-iniciado', {
+        PartidoID: partido.PartidoID,
+        NombreLocal: partido.NombreLocal,
+        NombreVisitante: partido.NombreVisitante
+      });
 
       await auditoriaService.registrar(
         'INICIO_PARTIDO', 'PARTIDOS',
@@ -62,10 +69,10 @@ const schedulerService = {
         'sistema'
       );
 
-      console.log(`⚽ Partido iniciado: ${partido.NombreLocal} vs ${partido.NombreVisitante}`);
+      console.log(`Partido iniciado: ${partido.NombreLocal} vs ${partido.NombreVisitante}`);
 
     } catch (error) {
-      console.error('❌ Error iniciando partido:', error);
+      console.error('Error iniciando partido:', error);
     }
   }
 };

@@ -54,7 +54,7 @@ router.post('/google', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('❌ Error en Google Auth:', error);
+    console.error('Error en Google Auth:', error);
     res.status(401).json({ message: "Token de Google inválido" });
   }
 });

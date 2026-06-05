@@ -3,52 +3,98 @@ const { sql } = require('../config/db');
 const partidoRepository = {
 
   async obtenerTodos() {
-  const request = new sql.Request();
-  const result = await request.query(`
-    SELECT P.*,
-      EL.NombreEquipo AS NombreLocal,
-      EV.NombreEquipo AS NombreVisitante,
-      EL.EscudoURL AS EscudoLocal,
-      EV.EscudoURL AS EscudoVisitante
-    FROM TBL_PARTIDOS P
-    INNER JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
-    INNER JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
-    ORDER BY P.FechaPartido
-  `);
-  return result.recordset;
-},
+    const request = new sql.Request();
+    const result = await request.query(`
+      SELECT P.*,
+        EL.NombreEquipo AS NombreLocal,
+        EV.NombreEquipo AS NombreVisitante,
+        EL.EscudoURL AS EscudoLocal,
+        EV.EscudoURL AS EscudoVisitante
+      FROM TBL_PARTIDOS P
+      INNER JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
+      INNER JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
+      ORDER BY P.FechaPartido
+    `);
+    return result.recordset;
+  },
 
   async obtenerFinalizados() {
-  const request = new sql.Request();
-  const result = await request.query(`
-    SELECT P.*,
-      EL.NombreEquipo AS NombreLocal,
-      EV.NombreEquipo AS NombreVisitante,
-      EL.EscudoURL AS EscudoLocal,
-      EV.EscudoURL AS EscudoVisitante
-    FROM TBL_PARTIDOS P
-    INNER JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
-    INNER JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
-    WHERE P.Estado_Juego = 'Finalizado'
-    ORDER BY P.FechaPartido
-  `);
-  return result.recordset;
-},
+    const request = new sql.Request();
+    const result = await request.query(`
+      SELECT P.*,
+        EL.NombreEquipo AS NombreLocal,
+        EV.NombreEquipo AS NombreVisitante,
+        EL.EscudoURL AS EscudoLocal,
+        EV.EscudoURL AS EscudoVisitante
+      FROM TBL_PARTIDOS P
+      INNER JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
+      INNER JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
+      WHERE P.Estado_Juego = 'Finalizado'
+      ORDER BY P.FechaPartido
+    `);
+    return result.recordset;
+  },
 
-    async crear(EquipoLocalID, EquipoVisitanteID, FechaPartido, Estadio, Fase, Estado_Juego) {
+  async obtenerPorFase(fase) {
+    const request = new sql.Request();
+    request.input('Fase', sql.VarChar, fase);
+    const result = await request.query(`
+      SELECT P.*,
+        EL.NombreEquipo AS NombreLocal,
+        EV.NombreEquipo AS NombreVisitante,
+        EL.EscudoURL AS EscudoLocal,
+        EV.EscudoURL AS EscudoVisitante
+      FROM TBL_PARTIDOS P
+      INNER JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
+      INNER JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
+      WHERE P.Fase = @Fase
+      ORDER BY P.FechaPartido
+    `);
+    return result.recordset;
+  },
+
+  async obtenerEliminatorias() {
+    const request = new sql.Request();
+    const result = await request.query(`
+      SELECT P.*,
+        EL.NombreEquipo AS NombreLocal,
+        EV.NombreEquipo AS NombreVisitante,
+        EL.EscudoURL AS EscudoLocal,
+        EV.EscudoURL AS EscudoVisitante
+      FROM TBL_PARTIDOS P
+      INNER JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
+      INNER JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
+      WHERE P.Fase IN (
+        'Dieciseisavos', 'Octavos', 'Cuartos',
+        'Semifinal', 'Tercer puesto', 'Final'
+      )
+      ORDER BY
+        CASE P.Fase
+          WHEN 'Dieciseisavos' THEN 1
+          WHEN 'Octavos'       THEN 2
+          WHEN 'Cuartos'       THEN 3
+          WHEN 'Semifinal'     THEN 4
+          WHEN 'Tercer puesto' THEN 5
+          WHEN 'Final'         THEN 6
+        END,
+        P.FechaPartido
+    `);
+    return result.recordset;
+  },
+
+  async crear(EquipoLocalID, EquipoVisitanteID, FechaPartido, Estadio, Fase, Estado_Juego) {
     const request = new sql.Request();
     request.input('EquipoLocalID', sql.Int, EquipoLocalID);
     request.input('EquipoVisitanteID', sql.Int, EquipoVisitanteID);
-    // Usar VarChar en lugar de DateTime para evitar conversión UTC
     request.input('FechaPartido', sql.VarChar, FechaPartido);
     request.input('Estadio', sql.VarChar, Estadio);
     request.input('Fase', sql.VarChar, Fase);
     request.input('Estado_Juego', sql.VarChar, Estado_Juego);
     await request.query(`
-      INSERT INTO TBL_PARTIDOS 
+      INSERT INTO TBL_PARTIDOS
         (EquipoLocalID, EquipoVisitanteID, FechaPartido, Estadio, Fase, Estado_Juego, GolesLocal, GolesVisitante)
-      VALUES 
-        (@EquipoLocalID, @EquipoVisitanteID, CONVERT(datetime, @FechaPartido, 120), 
+      VALUES
+        (@EquipoLocalID, @EquipoVisitanteID, CONVERT(datetime, @FechaPartido, 120),
         @Estadio, @Fase, @Estado_Juego, NULL, NULL)
     `);
   },
@@ -58,7 +104,7 @@ const partidoRepository = {
     request.input('PartidoID', sql.Int, PartidoID);
     request.input('EquipoLocalID', sql.Int, EquipoLocalID);
     request.input('EquipoVisitanteID', sql.Int, EquipoVisitanteID);
-    request.input('FechaPartido', sql.DateTime, FechaPartido);
+    request.input('FechaPartido', sql.VarChar, FechaPartido);
     request.input('Estadio', sql.VarChar, Estadio || '');
     request.input('Fase', sql.VarChar, Fase);
     request.input('Estado_Juego', sql.VarChar, Estado_Juego || 'Programado');
@@ -66,8 +112,9 @@ const partidoRepository = {
       UPDATE TBL_PARTIDOS
       SET EquipoLocalID = @EquipoLocalID,
           EquipoVisitanteID = @EquipoVisitanteID,
-          FechaPartido = @FechaPartido,
-          Estadio = @Estadio, Fase = @Fase,
+          FechaPartido = CONVERT(datetime, @FechaPartido, 120),
+          Estadio = @Estadio,
+          Fase = @Fase,
           Estado_Juego = @Estado_Juego
       WHERE PartidoID = @PartidoID
     `);

@@ -3,7 +3,6 @@
     <div class="user-container">
       <section>
 
-        <!-- TABS -->
         <div class="tabs-container">
           <button class="tab-btn"
             [class.active]="vistaActiva === 'partidos'"
@@ -125,7 +124,7 @@
                   <td>{{ i + 1 }}</td>
                   <td><strong>{{ p.NombreLocal || getNombreEquipo(p.EquipoLocalID) }}</strong></td>
                   <td><strong>{{ p.NombreVisitante || getNombreEquipo(p.EquipoVisitanteID) }}</strong></td>
-                  <td>{{ p.FechaPartido | date:'dd/MM/yyyy HH:mm' }}</td>
+                  <td>{{ formatearFechaDisplay(p.FechaPartido) }}</td>
                   <td>{{ p.Estadio }}</td>
                   <td>
                     <span class="badge" [ngClass]="getFaseBadgeColor(p.Fase)">
@@ -165,7 +164,6 @@
         <!-- ==================== VISTA RESULTADOS ==================== -->
         <div *ngIf="vistaActiva === 'resultados'">
 
-          <!-- FORMULARIO CORRECCIÓN -->
           <div class="form-section" *ngIf="partidoSeleccionado">
             <div class="correccion-header">
               <h3>✏️ Corregir Resultado</h3>
@@ -183,10 +181,10 @@
                 <span class="nombre-equipo">{{ partidoSeleccionado.NombreLocal }}</span>
                 <div class="goles-control">
                   <button class="btn btn-outline-light btn-sm"
-                    (click)="golesLocal = golesLocal > 0 ? golesLocal - 1 : 0">−</button>
+                    (click)="golesLocal = golesLocal > 0 ? golesLocal - 1 : 0; onGolesChange()">−</button>
                   <span class="goles-numero">{{ golesLocal }}</span>
                   <button class="btn btn-outline-light btn-sm"
-                    (click)="golesLocal = golesLocal + 1">+</button>
+                    (click)="golesLocal = golesLocal + 1; onGolesChange()">+</button>
                 </div>
               </div>
 
@@ -199,10 +197,35 @@
                 <span class="nombre-equipo">{{ partidoSeleccionado.NombreVisitante }}</span>
                 <div class="goles-control">
                   <button class="btn btn-outline-light btn-sm"
-                    (click)="golesVisitante = golesVisitante > 0 ? golesVisitante - 1 : 0">−</button>
+                    (click)="golesVisitante = golesVisitante > 0 ? golesVisitante - 1 : 0; onGolesChange()">−</button>
                   <span class="goles-numero">{{ golesVisitante }}</span>
                   <button class="btn btn-outline-light btn-sm"
-                    (click)="golesVisitante = golesVisitante + 1">+</button>
+                    (click)="golesVisitante = golesVisitante + 1; onGolesChange()">+</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- PENALES — solo en fase eliminatoria con empate -->
+            <div class="penales-box" *ngIf="esFaseEliminatoria && hayEmpate">
+              <div class="penales-titulo">
+                <i class="bi bi-crosshair"></i>
+                Definición por penales
+              </div>
+              <div class="penales-inputs">
+                <div class="input-group-penal">
+                  <label>{{ partidoSeleccionado.NombreLocal }}</label>
+                  <input type="number" min="0" max="20"
+                    [(ngModel)]="penalesLocal"
+                    class="input-penal"
+                    placeholder="0"/>
+                </div>
+                <span class="penal-sep">–</span>
+                <div class="input-group-penal">
+                  <label>{{ partidoSeleccionado.NombreVisitante }}</label>
+                  <input type="number" min="0" max="20"
+                    [(ngModel)]="penalesVisitante"
+                    class="input-penal"
+                    placeholder="0"/>
                 </div>
               </div>
             </div>
@@ -210,7 +233,7 @@
             <div class="partido-info mt-3">
               <span>
                 <i class="bi bi-calendar"></i>
-                {{ partidoSeleccionado.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+                {{ formatearFechaDisplay(partidoSeleccionado.FechaPartido) }}
               </span>
               <span *ngIf="partidoSeleccionado.Estadio">
                 <i class="bi bi-geo-alt"></i> {{ partidoSeleccionado.Estadio }}
@@ -230,7 +253,6 @@
             </div>
           </div>
 
-          <!-- TABLA PARTIDOS FINALIZADOS -->
           <div class="table-section" [class.mt-4]="partidoSeleccionado">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h3>✅ Partidos Finalizados
@@ -256,22 +278,22 @@
                 <tr *ngFor="let p of listaPartidosFinalizados; let i = index"
                   [class.fila-seleccionada]="partidoSeleccionado?.PartidoID === p.PartidoID">
                   <td>{{ i + 1 }}</td>
-                  <td>
-                    <strong>{{ p.NombreLocal }}</strong>
-                  </td>
+                  <td><strong>{{ p.NombreLocal }}</strong></td>
                   <td class="text-center">
                     <span *ngIf="p.GolesLocal !== null"
                       class="marcador-tabla" [ngClass]="getResultadoBadge(p)">
                       {{ p.GolesLocal }} - {{ p.GolesVisitante }}
+                      <span *ngIf="p.PenalesLocal !== null"
+                        class="penales-badge">
+                        ({{ p.PenalesLocal }}-{{ p.PenalesVisitante }} pen)
+                      </span>
                     </span>
                     <span *ngIf="p.GolesLocal === null" class="text-muted">
                       Sin resultado
                     </span>
                   </td>
-                  <td>
-                    <strong>{{ p.NombreVisitante }}</strong>
-                  </td>
-                  <td>{{ p.FechaPartido | date:'dd/MM/yyyy HH:mm':'UTC' }}</td>
+                  <td><strong>{{ p.NombreVisitante }}</strong></td>
+                  <td>{{ formatearFechaDisplay(p.FechaPartido) }}</td>
                   <td>
                     <span class="badge" [ngClass]="getFaseBadgeColor(p.Fase)">
                       {{ p.Fase }}
@@ -331,7 +353,7 @@
           <div class="detalle-row">
             <span class="detalle-label">Fecha</span>
             <span class="detalle-valor">
-              {{ partidoVer.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+              {{ formatearFechaDisplay(partidoVer.FechaPartido) }}
             </span>
           </div>
           <div class="detalle-row">
@@ -350,6 +372,10 @@
             <span class="detalle-label">Marcador</span>
             <span class="detalle-valor">
               {{ partidoVer.GolesLocal ?? '—' }} - {{ partidoVer.GolesVisitante ?? '—' }}
+              <span *ngIf="partidoVer.PenalesLocal !== null"
+                class="penales-badge ms-2">
+                ({{ partidoVer.PenalesLocal }}-{{ partidoVer.PenalesVisitante }} pen)
+              </span>
             </span>
           </div>
           <div class="detalle-row">
@@ -394,7 +420,7 @@
             {{ partidoAEliminar?.NombreVisitante || getNombreEquipo(partidoAEliminar?.EquipoVisitanteID) }}
           </p>
           <p style="color:rgba(255,255,255,0.4); font-size:0.85rem;">
-            {{ partidoAEliminar?.FechaPartido | date:'dd/MM/yyyy HH:mm' }}
+            {{ formatearFechaDisplay(partidoAEliminar?.FechaPartido) }}
             — {{ partidoAEliminar?.Fase }}
           </p>
           <small style="color:#f87e8a;">
@@ -414,7 +440,7 @@
     </div>
   </div>
 
-  <!-- MODAL ESTADÍSTICAS DEL PARTIDO -->
+  <!-- MODAL ESTADÍSTICAS -->
   <div class="modal-detalle" *ngIf="partidoEstadisticas"
     (click)="cerrarEstadisticas()">
     <div class="modal-detalle-content" (click)="$event.stopPropagation()">
@@ -429,7 +455,6 @@
         </button>
       </div>
 
-      <!-- MARCADOR -->
       <div class="md-marcador">
         <div class="md-equipo">
           <img *ngIf="partidoEstadisticas.EscudoLocal"
@@ -446,6 +471,10 @@
             <span class="md-sep">-</span>
             <span class="md-gol">{{ partidoEstadisticas.GolesVisitante }}</span>
           </div>
+          <span class="penales-resultado"
+            *ngIf="partidoEstadisticas.PenalesLocal !== null">
+            ({{ partidoEstadisticas.PenalesLocal }}-{{ partidoEstadisticas.PenalesVisitante }} pen)
+          </span>
           <span class="md-estado">Finalizado</span>
         </div>
 
@@ -466,11 +495,9 @@
 
       <div *ngIf="!cargandoDetalle">
 
-        <!-- ESTADÍSTICAS -->
         <div class="md-stats" *ngIf="estadisticasDetalle.length > 0">
           <h4>📈 Estadísticas</h4>
 
-          <!-- POSESIÓN -->
           <div class="posesion-box" *ngIf="getLocal() && getVisitante()">
             <div class="posesion-barra">
               <div class="posesion-local"
@@ -541,7 +568,6 @@
           </div>
         </div>
 
-        <!-- EVENTOS -->
         <div class="md-eventos" *ngIf="eventosDetalle.length > 0">
           <h4>📋 Eventos del Partido</h4>
           <div class="md-eventos-lista">

@@ -15,7 +15,9 @@ import { AdminGuard } from './core/guards/admin.guard';
 import { TablaPosicionesComponent } from './features/dashboard/components/tabla-posiciones/tabla-posiciones.component';
 import { ConsultaPartidosComponent } from './features/dashboard/components/consulta-partidos/consulta-partidos.component';
 import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo.component';
-
+import { PrediccionPartidoComponent } from './features/predicciones/components/prediccion-partido/prediccion-partido.component';
+import { PrediccionCampeonComponent } from './features/predicciones/components/prediccion-campeon/prediccion-campeon.component';
+import { PrediccionHistorialComponent } from './features/predicciones/components/prediccion-historial/prediccion-historial.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -26,6 +28,9 @@ const routes: Routes = [
   { path: 'tabla-posiciones', component: TablaPosicionesComponent, canActivate: [AuthGuard] },
   { path: 'consulta-partidos', component: ConsultaPartidosComponent, canActivate: [AuthGuard] },
   { path: 'en-vivo', component: EnVivoComponent, canActivate: [AuthGuard] },
+  { path: 'prediccion-partido', component: PrediccionPartidoComponent, canActivate: [AuthGuard] },
+  { path: 'prediccion-campeon', component: PrediccionCampeonComponent, canActivate: [AuthGuard] },
+  { path: 'prediccion-historial', component: PrediccionHistorialComponent, canActivate: [AuthGuard] },
   // Rutas solo para admin
   { path: 'Register_UserConfig', component: RegisterUserConfigComponent, canActivate: [AuthGuard, AdminGuard] },
   { path: 'gestion-roles', component: GestionRolesComponent, canActivate: [AuthGuard, AdminGuard] },

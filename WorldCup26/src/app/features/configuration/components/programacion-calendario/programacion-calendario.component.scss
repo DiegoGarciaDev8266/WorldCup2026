@@ -700,3 +700,74 @@ section {
   color: rgba(255,255,255,0.3);
   font-size: 0.85rem;
 }
+
+.penales-box {
+  background: rgba(233,69,96,0.06);
+  border: 1px solid rgba(233,69,96,0.2);
+  border-radius: 10px;
+  padding: 16px;
+  margin-top: 12px;
+  animation: fadeIn 0.3s ease;
+
+  .penales-titulo {
+    font-size: 0.82rem;
+    color: #e94560;
+    font-weight: 600;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+}
+
+.penales-inputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+
+  .penal-sep {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: rgba(255,255,255,0.4);
+  }
+}
+
+.input-group-penal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  label {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.5);
+    text-align: center;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+.input-penal {
+  width: 70px;
+  height: 50px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(233,69,96,0.3);
+  border-radius: 8px;
+  color: white;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: 0.2s;
+
+  &:focus {
+    border-color: #e94560;
+    background: rgba(233,69,96,0.1);
+  }
+
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button { opacity: 0; }
+}

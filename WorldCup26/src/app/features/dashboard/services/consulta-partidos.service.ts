@@ -4,16 +4,15 @@ import { tap } from 'rxjs/operators';
 import { ApiService } from '../../../core/services/api.service';
 
 @Injectable({
-  providedIn: 'root' // ← SINGLETON
+  providedIn: 'root'
 })
 export class ConsultaPartidosService {
 
-  // OBSERVER PATTERN
   private partidosSubject = new BehaviorSubject<any[]>([]);
-  private equiposSubject = new BehaviorSubject<any[]>([]);
+  private equiposSubject  = new BehaviorSubject<any[]>([]);
 
   partidos$ = this.partidosSubject.asObservable();
-  equipos$ = this.equiposSubject.asObservable();
+  equipos$  = this.equiposSubject.asObservable();
 
   constructor(private api: ApiService) {}
 
@@ -27,5 +26,9 @@ export class ConsultaPartidosService {
     return this.api.get<any[]>('/cup/GetEquipos').pipe(
       tap(data => this.equiposSubject.next(data))
     );
+  }
+
+  getEliminatorias(): Observable<any[]> {
+    return this.api.get<any[]>('/cup/GetEliminatorias');
   }
 }

@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const usuarioRepository = require('../repositories/usuario.repository');
 
-// Singleton: módulo cargado una sola vez
+// Singleton
 const authService = {
 
   async encriptarContrasena(password) {

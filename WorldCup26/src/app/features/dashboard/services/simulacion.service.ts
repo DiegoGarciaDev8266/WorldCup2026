@@ -6,7 +6,8 @@ export interface EventoPartido {
   minuto: number;
   tipo: 'GOL' | 'TARJETA_AMARILLA' | 'TARJETA_ROJA' | 'FALTA' |
         'SUSTITUCION' | 'TIRO' | 'ATAJADA' | 'INICIO' | 'MEDIO_TIEMPO' |
-        'FIN' | 'PENALTI' | 'CORNER' | 'FUERA_DE_JUEGO';
+        'FIN' | 'PENALTI' | 'PENALTI_GOL' | 'PENALTI_FALLADO' |
+        'CORNER' | 'FUERA_DE_JUEGO';
   equipo: string;
   descripcion: string;
   esLocal: boolean;
@@ -24,19 +25,17 @@ export interface EstadoPartido {
 }
 
 @Injectable({
-  providedIn: 'root' // ← SINGLETON
+  providedIn: 'root'
 })
 export class SimulacionService {
 
-  // OBSERVER PATTERN — estado por partido
   private estadosSubject = new BehaviorSubject<Map<number, EstadoPartido>>(new Map());
   estados$ = this.estadosSubject.asObservable();
 
-  private INTERVALO_MS = 4000;
+  private INTERVALO_MS = 3500;
 
   constructor(private api: ApiService) {}
 
-  // Obtener estado de un partido específico
   getEstado(partidoID: number): EstadoPartido {
     const estados = this.estadosSubject.getValue();
     if (!estados.has(partidoID)) {
@@ -56,10 +55,7 @@ export class SimulacionService {
   }
 
   iniciarSimulacion(partido: any) {
-    const estados = this.estadosSubject.getValue();
     const estado = this.getEstado(partido.PartidoID);
-
-    // Si ya está corriendo no reiniciar
     if (estado.simulando) return;
 
     estado.minutosSimulados = 0;
@@ -70,7 +66,6 @@ export class SimulacionService {
     estado.simulando = true;
     estado.medioTiempo = false;
 
-    // Inicializar estadísticas
     this.api.post('/cup/InicializarEstadisticas', {
       PartidoID: partido.PartidoID,
       EquipoLocalID: partido.EquipoLocalID,
@@ -87,6 +82,7 @@ export class SimulacionService {
       await this.avanzarMinuto(partido);
     }, this.INTERVALO_MS);
 
+    const estados = this.estadosSubject.getValue();
     estados.set(partido.PartidoID, estado);
     this.estadosSubject.next(new Map(estados));
   }
@@ -141,7 +137,49 @@ export class SimulacionService {
 
       if (!response || response.tipo === 'NADA') return;
 
-      if (response.tipo === 'GOL' || response.tipo === 'PENALTI') {
+      // ── PENALTI EN DOS PASOS ──
+      if (response.tipo === 'PENALTI') {
+
+        // Evento 1 — se señala el penalti
+        this.agregarEvento(partido.PartidoID, {
+          minuto: estado.minutosSimulados,
+          tipo: 'PENALTI',
+          equipo: response.equipo,
+          descripcion: response.descripcionSeñalado,
+          esLocal: response.esLocal
+        });
+
+        // Esperar 2 segundos antes del lanzamiento
+        await this.esperar(2000);
+
+        // Evento 2 — resultado del lanzamiento
+        if (response.esGol) {
+          if (response.esLocal) {
+            estado.golesLocal++;
+          } else {
+            estado.golesVisitante++;
+          }
+
+          this.api.put('/cup/ActualizarMarcadorVivo', {
+            PartidoID: partido.PartidoID,
+            GolesLocal: estado.golesLocal,
+            GolesVisitante: estado.golesVisitante
+          }).subscribe();
+        }
+
+        this.agregarEvento(partido.PartidoID, {
+          minuto: estado.minutosSimulados,
+          tipo: response.resultado,
+          equipo: response.equipo,
+          descripcion: response.descripcionResultado,
+          esLocal: response.esLocal
+        });
+
+        return;
+      }
+
+      // ── EVENTOS NORMALES ──
+      if (response.tipo === 'GOL') {
         if (response.esLocal) {
           estado.golesLocal++;
         } else {

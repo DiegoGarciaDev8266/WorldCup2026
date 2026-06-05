@@ -1,0 +1,251 @@
+// CAMPANA GLOBAL
+.campana-global {
+    position: fixed;
+    top: 16px;
+    right: 20px;
+    z-index: 1500;
+}
+
+.campana-btn {
+    position: relative;
+    background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+    border: 1px solid rgba(0,198,255,0.3);
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: 0.2s;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+
+    &:hover {
+        background: rgba(0,198,255,0.15);
+        border-color: rgba(0,198,255,0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,198,255,0.2);
+    }
+}
+
+.campana-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e94560;
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 8px;
+    min-width: 16px;
+    text-align: center;
+    animation: pulse-badge 1.5s infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+}
+
+// PANEL FLOTANTE
+.notif-panel-flotante {
+    position: fixed;
+    top: 70px;
+    right: 20px;
+    width: 320px;
+    background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+    border: 1px solid rgba(0,198,255,0.2);
+    border-radius: 14px;
+    z-index: 1500;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+    animation: slideDown 0.25s ease;
+    max-height: 400px;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.1);
+        border-radius: 4px;
+    }
+}
+
+.notif-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: white;
+    position: sticky;
+    top: 0;
+    background: #1a1a2e;
+    z-index: 1;
+
+    .notif-limpiar {
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.4);
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: 0.2s;
+        &:hover { color: #e94560; }
+    }
+}
+
+.notif-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 32px 16px;
+    color: rgba(255,255,255,0.3);
+    font-size: 0.85rem;
+    i { font-size: 2rem; }
+}
+
+.notif-item {
+    padding: 12px 16px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    transition: 0.2s;
+    border-left: 3px solid transparent;
+
+    &:hover { background: rgba(0,198,255,0.06); }
+    &.notif-vivo      { border-left-color: #e94560; }
+    &.notif-programado { border-left-color: #00c6ff; }
+    &.notif-actualizado { border-left-color: #f0a500; }
+
+    .notif-titulo {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: white;
+        margin-bottom: 4px;
+    }
+
+    .notif-msg {
+        font-size: 0.78rem;
+        color: rgba(255,255,255,0.5);
+        line-height: 1.4;
+    }
+}
+
+// MODAL
+.notif-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+}
+
+.notif-modal {
+    background: linear-gradient(135deg, #1a1a2e, #0d1b3e);
+    border: 1px solid rgba(0,198,255,0.2);
+    border-radius: 20px;
+    padding: 36px 32px;
+    width: 380px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    animation: slideUp 0.3s ease;
+
+    &.modal-vivo {
+        border-color: rgba(233,69,96,0.4);
+        box-shadow: 0 20px 60px rgba(233,69,96,0.2);
+    }
+    &.modal-programado {
+        border-color: rgba(0,198,255,0.4);
+        box-shadow: 0 20px 60px rgba(0,198,255,0.2);
+    }
+    &.modal-actualizado {
+        border-color: rgba(240,165,0,0.4);
+        box-shadow: 0 20px 60px rgba(240,165,0,0.2);
+    }
+}
+
+.notif-modal-icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+}
+
+.notif-modal-titulo {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 12px;
+}
+
+.notif-modal-detalle {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.65);
+    line-height: 1.7;
+    margin-bottom: 28px;
+    white-space: pre-line;
+}
+
+.notif-modal-acciones {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+.btn-modal-ir {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border: none;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: 0.2s;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0,114,255,0.3);
+    }
+}
+
+.btn-modal-cerrar {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.6);
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: 0.2s;
+
+    &:hover {
+        background: rgba(255,255,255,0.1);
+        color: white;
+    }
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}

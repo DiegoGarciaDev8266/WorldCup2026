@@ -2,17 +2,21 @@ const { sql } = require('../config/db');
 
 const resultadoRepository = {
 
-  async actualizarGoles(PartidoID, GolesLocal, GolesVisitante, Estado_Juego) {
+  async actualizarGoles(PartidoID, GolesLocal, GolesVisitante, Estado_Juego, PenalesLocal = null, PenalesVisitante = null) {
     const request = new sql.Request();
     request.input('PartidoID', sql.Int, PartidoID);
     request.input('GolesLocal', sql.Int, GolesLocal);
     request.input('GolesVisitante', sql.Int, GolesVisitante);
     request.input('Estado_Juego', sql.VarChar, Estado_Juego || 'Finalizado');
+    request.input('PenalesLocal', sql.Int, PenalesLocal);
+    request.input('PenalesVisitante', sql.Int, PenalesVisitante);
     await request.query(`
       UPDATE TBL_PARTIDOS
       SET GolesLocal = @GolesLocal,
           GolesVisitante = @GolesVisitante,
-          Estado_Juego = @Estado_Juego
+          Estado_Juego = @Estado_Juego,
+          PenalesLocal = @PenalesLocal,
+          PenalesVisitante = @PenalesVisitante
       WHERE PartidoID = @PartidoID
     `);
   },
@@ -84,44 +88,39 @@ const resultadoRepository = {
   },
 
   async registrarAuditoria(PartidoID, GolesLocal, GolesVisitante, UsuarioAccion, TipoAccion, Modulo, Descripcion) {
-  const request = new sql.Request();
-  request.input('PartidoID', sql.Int, PartidoID || null);
-  request.input('GolesLocal', sql.Int, GolesLocal || null);
-  request.input('GolesVisitante', sql.Int, GolesVisitante || null);
-  request.input('UsuarioAccion', sql.VarChar, UsuarioAccion || 'sistema');
-  request.input('TipoAccion', sql.VarChar, TipoAccion);
-  request.input('Modulo', sql.VarChar, Modulo || 'SISTEMA');
-  request.input('Descripcion', sql.VarChar, Descripcion || '');
-  await request.query(`
-    INSERT INTO TBL_AUDITORIA 
-      (PartidoID, GolesLocal, GolesVisitante, UsuarioAccion, TipoAccion, Modulo, Descripcion)
-    VALUES 
-      (@PartidoID, @GolesLocal, @GolesVisitante, @UsuarioAccion, @TipoAccion, @Modulo, @Descripcion)
-  `);
-},
+    const request = new sql.Request();
+    request.input('PartidoID', sql.Int, PartidoID || null);
+    request.input('GolesLocal', sql.Int, GolesLocal || null);
+    request.input('GolesVisitante', sql.Int, GolesVisitante || null);
+    request.input('UsuarioAccion', sql.VarChar, UsuarioAccion || 'sistema');
+    request.input('TipoAccion', sql.VarChar, TipoAccion);
+    request.input('Modulo', sql.VarChar, Modulo || 'SISTEMA');
+    request.input('Descripcion', sql.VarChar, Descripcion || '');
+    await request.query(`
+      INSERT INTO TBL_AUDITORIA 
+        (PartidoID, GolesLocal, GolesVisitante, UsuarioAccion, TipoAccion, Modulo, Descripcion)
+      VALUES 
+        (@PartidoID, @GolesLocal, @GolesVisitante, @UsuarioAccion, @TipoAccion, @Modulo, @Descripcion)
+    `);
+  },
 
-async obtenerAuditoria() {
-  const request = new sql.Request();
-  const result = await request.query(`
-    SELECT 
-      A.AuditoriaID,
-      A.GolesLocal,
-      A.GolesVisitante,
-      A.FechaAccion,
-      A.UsuarioAccion,
-      A.TipoAccion,
-      A.Modulo,
-      A.Descripcion,
-      EL.NombreEquipo AS NombreLocal,
-      EV.NombreEquipo AS NombreVisitante
-    FROM TBL_AUDITORIA A
-    LEFT JOIN TBL_PARTIDOS P ON A.PartidoID = P.PartidoID
-    LEFT JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
-    LEFT JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
-    ORDER BY A.FechaAccion DESC
-  `);
-  return result.recordset;
-}
+  async obtenerAuditoria() {
+    const request = new sql.Request();
+    const result = await request.query(`
+      SELECT 
+        A.AuditoriaID, A.GolesLocal, A.GolesVisitante,
+        A.FechaAccion, A.UsuarioAccion, A.TipoAccion,
+        A.Modulo, A.Descripcion,
+        EL.NombreEquipo AS NombreLocal,
+        EV.NombreEquipo AS NombreVisitante
+      FROM TBL_AUDITORIA A
+      LEFT JOIN TBL_PARTIDOS P ON A.PartidoID = P.PartidoID
+      LEFT JOIN TBL_EQUIPOS EL ON P.EquipoLocalID = EL.EquipoID
+      LEFT JOIN TBL_EQUIPOS EV ON P.EquipoVisitanteID = EV.EquipoID
+      ORDER BY A.FechaAccion DESC
+    `);
+    return result.recordset;
+  }
 };
 
 module.exports = resultadoRepository;

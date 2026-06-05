@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const partidoService = require('../services/partido.service');
-const { sql } = require('../config/db'); // ← mover aquí arriba
+const partidoRepository = require('../repositories/partido.repository');
+const { sql } = require('../config/db');
 
 router.get('/GetPartidos', async (req, res) => {
   try {
@@ -39,8 +40,18 @@ router.get('/GetPartidosEnVivo', async (req, res) => {
     `);
     res.json(result.recordset);
   } catch (error) {
-    console.error('❌ Error GetPartidosEnVivo:', error);
+    console.error('Error GetPartidosEnVivo:', error);
     res.status(500).json({ message: "Error al obtener partidos en vivo" });
+  }
+});
+
+router.get('/GetEliminatorias', async (req, res) => {
+  try {
+    const partidos = await partidoRepository.obtenerEliminatorias();
+    res.json(partidos);
+  } catch (error) {
+    console.error('Error GetEliminatorias:', error);
+    res.status(500).json({ message: 'Error al obtener eliminatorias' });
   }
 });
 
@@ -65,12 +76,53 @@ router.put('/ActualizarPartido', async (req, res) => {
 });
 
 router.delete('/EliminarPartido/:id', async (req, res) => {
+  const partidoId = req.params.id;
+  console.log(`\n=== INTENTANDO ELIMINAR PARTIDO ID: ${partidoId} ===`);
+  
   try {
+    const request = new sql.Request();
+    request.input('PartidoID', sql.Int, partidoId);
+
+    // 1. Limpiar registros de la tabla de Auditoría vinculados al partido (La que causaba el conflicto)
+    try {
+      await request.query(`DELETE FROM dbo.TBL_AUDITORIA WHERE PartidoID = @PartidoID`);
+      console.log('✅ TBL_AUDITORIA limpiada exitosamente.');
+    } catch (err) {
+      console.error('⚠️ Error al limpiar TBL_AUDITORIA:', err.message);
+    }
+
+    // 2. Limpiar Eventos del Partido
+    try {
+      await request.query(`DELETE FROM dbo.TBL_EVENTOS_PARTIDO WHERE PartidoID = @PartidoID`);
+      console.log('✅ TBL_EVENTOS_PARTIDO limpiada exitosamente.');
+    } catch (err) {
+      console.error('⚠️ Error al limpiar TBL_EVENTOS_PARTIDO:', err.message);
+    }
+
+    // 3. Limpiar Estadísticas del Partido
+    try {
+      await request.query(`DELETE FROM dbo.TBL_ESTADISTICAS_PARTIDO WHERE PartidoID = @PartidoID`);
+      console.log('✅ TBL_ESTADISTICAS_PARTIDO limpiada exitosamente.');
+    } catch (err) {
+      console.error('⚠️ Error al limpiar TBL_ESTADISTICAS_PARTIDO:', err.message);
+    }
+
+    // 4. Ejecutar el borrado principal del partido en el servicio
+    console.log('-> Solicitando borrado definitivo a partidoService...');
     const usuario = req.user?.nombre || 'sistema';
-    await partidoService.eliminar(req.params.id, usuario);
+    await partidoService.eliminar(partidoId, usuario);
+    
+    console.log(`=== PARTIDO ${partidoId} ELIMINADO EXITOSAMENTE ===\n`);
     res.json({ message: "Partido eliminado correctamente" });
+
   } catch (error) {
-    res.status(500).json({ message: "Error al eliminar partido" });
+    console.error('❌ ERROR REAL EN SQL SERVER:');
+    console.error(error.message);
+    
+    res.status(500).json({ 
+      message: "Error interno en el servidor al eliminar partido", 
+      sqlError: error.message 
+    });
   }
 });
 
@@ -88,23 +140,26 @@ router.put('/ActualizarMarcadorVivo', async (req, res) => {
     `);
     res.json({ message: "Marcador actualizado" });
   } catch (error) {
-    console.error('❌ Error ActualizarMarcadorVivo:', error);
+    console.error('Error ActualizarMarcadorVivo:', error);
     res.status(500).json({ message: "Error al actualizar marcador" });
   }
 });
 
 router.put('/FinalizarPartido', async (req, res) => {
   try {
-    const { PartidoID, GolesLocal, GolesVisitante } = req.body;
+    const {
+      PartidoID, GolesLocal, GolesVisitante,
+      PenalesLocal, PenalesVisitante
+    } = req.body;
     const usuario = req.user?.nombre || 'sistema';
 
     const resultadoService = require('../services/resultado.service');
     await resultadoService.registrarResultado(
-      PartidoID, GolesLocal, GolesVisitante, 'Finalizado', usuario
+      PartidoID, GolesLocal, GolesVisitante,
+      'Finalizado', usuario,
+      PenalesLocal ?? null, PenalesVisitante ?? null
     );
 
-    // Calcular posesión al finalizar
-    const { sql } = require('../config/db');
     const reqPartido = new sql.Request();
     reqPartido.input('PartidoID', sql.Int, PartidoID);
     const partidoResult = await reqPartido.query(`
@@ -129,7 +184,7 @@ router.put('/FinalizarPartido', async (req, res) => {
 
     res.json({ message: "Partido finalizado correctamente" });
   } catch (error) {
-    console.error('❌ Error FinalizarPartido:', error);
+    console.error('Error FinalizarPartido:', error);
     res.status(500).json({ message: "Error al finalizar partido" });
   }
 });

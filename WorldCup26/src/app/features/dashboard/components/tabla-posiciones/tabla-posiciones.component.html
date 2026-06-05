@@ -1,6 +1,5 @@
 <div class="tp-container">
 
-  <!-- HEADER -->
   <div class="tp-header">
     <div class="tp-header-left">
       <img src="assets/Logo.png" alt="Logo" class="tp-logo"/>
@@ -14,120 +13,238 @@
     </div>
   </div>
 
-  <!-- LOADING -->
-  <div class="tp-loading" *ngIf="cargando">
-    <div class="spinner"></div>
-    <span>Cargando posiciones...</span>
+  <!-- TABS -->
+  <div class="tp-tabs">
+    <button class="tp-tab" [class.activo]="tabActiva === 'grupos'"
+      (click)="tabActiva = 'grupos'">
+      📊 Fase de Grupos
+    </button>
+    <button class="tp-tab" [class.activo]="tabActiva === 'bracket'"
+      (click)="tabActiva = 'bracket'; cargarEliminatorias()">
+      ⚔️ Eliminatorias
+    </button>
   </div>
 
-  <div *ngIf="!cargando">
+  <!-- TAB GRUPOS -->
+  <div *ngIf="tabActiva === 'grupos'">
 
-    <!-- SELECTOR DE GRUPOS -->
-    <div class="grupos-nav">
-      <button *ngFor="let g of grupos"
-        class="grupo-btn"
-        [class.activo]="grupoActivo === g"
-        (click)="grupoActivo = g">
-        <span class="grupo-letra">{{ g }}</span>
-      </button>
+    <div class="tp-loading" *ngIf="cargando">
+      <div class="spinner"></div>
+      <span>Cargando posiciones...</span>
     </div>
 
-    <!-- TABLA DEL GRUPO ACTIVO -->
-    <div class="tp-card">
-      <div class="tp-card-header">
-        <h3>Grupo {{ grupoActivo }}</h3>
-        <div class="leyenda">
+    <div *ngIf="!cargando">
+      <div class="grupos-nav">
+        <button *ngFor="let g of grupos"
+          class="grupo-btn"
+          [class.activo]="grupoActivo === g"
+          (click)="grupoActivo = g">
+          <span class="grupo-letra">{{ g }}</span>
+        </button>
+      </div>
+
+      <div class="tp-card">
+        <div class="tp-card-header">
+          <h3>Grupo {{ grupoActivo }}</h3>
+          <div class="leyenda">
             <span class="leyenda-item">
-                <span class="dot verde"></span> Clasifican a la siguiente ronda
+              <span class="dot verde"></span> Clasifican a la siguiente ronda
             </span>
-        </div>
-      </div>
-
-      <table class="tp-table">
-        <thead>
-          <tr>
-            <th class="th-pos">#</th>
-            <th class="th-equipo">Equipo</th>
-            <th>PJ</th>
-            <th>G</th>
-            <th>E</th>
-            <th>P</th>
-            <th>GF</th>
-            <th>GC</th>
-            <th>DIF</th>
-            <th>PTS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let pos of posicionesGrupoActivo; let i = index"
-            [class]="getClasificacion(i)">
-            <td class="td-pos">
-              <span class="pos-num">{{ i + 1 }}</span>
-            </td>
-            <td class="td-equipo">
-              <img *ngIf="pos.EscudoURL" [src]="pos.EscudoURL"
-                [alt]="pos.NombreEquipo" class="escudo"/>
-              <strong>{{ pos.NombreEquipo }}</strong>
-            </td>
-            <td>{{ pos.PartidosJugados }}</td>
-            <td>{{ pos.Ganados }}</td>
-            <td>{{ pos.Empatados }}</td>
-            <td>{{ pos.Perdidos }}</td>
-            <td>{{ pos.GolesAFavor }}</td>
-            <td>{{ pos.GolesEnContra }}</td>
-            <td [class.positivo]="pos.GolesAFavor - pos.GolesEnContra > 0"
-                [class.negativo]="pos.GolesAFavor - pos.GolesEnContra < 0">
-              {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}{{ pos.GolesAFavor - pos.GolesEnContra }}
-            </td>
-            <td class="td-pts">
-              <strong>{{ pos.Puntos }}</strong>
-            </td>
-          </tr>
-          <tr *ngIf="posicionesGrupoActivo.length === 0">
-            <td colspan="10" class="sin-datos">
-              Sin datos para el Grupo {{ grupoActivo }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- VISTA GENERAL TODOS LOS GRUPOS -->
-    <div class="todos-grupos">
-      <h3 class="todos-titulo">📊 Resumen General</h3>
-      <div class="grupos-grid">
-        <div *ngFor="let g of todosLosGrupos" class="grupo-mini-card">
-          <div class="grupo-mini-header">
-            <span>Grupo {{ g.grupo }}</span>
           </div>
-          <table class="mini-table">
-            <thead>
-              <tr>
-                <th>Equipo</th>
-                <th>PJ</th>
-                <th>PTS</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let eq of g.equipos; let i = index"
-                [class.mini-clasifica]="i < 2">
-                <td>
-                  <img *ngIf="eq.EscudoURL" [src]="eq.EscudoURL"
-                    [alt]="eq.NombreEquipo" class="escudo-mini"/>
-                  {{ eq.NombreEquipo }}
-                </td>
-                <td>{{ eq.PartidosJugados }}</td>
-                <td><strong>{{ eq.Puntos }}</strong></td>
-              </tr>
-              <tr *ngIf="g.equipos.length === 0">
-                <td colspan="3" class="sin-datos-mini">Sin datos</td>
-              </tr>
-            </tbody>
-          </table>
+        </div>
+
+        <table class="tp-table">
+          <thead>
+            <tr>
+              <th class="th-pos">#</th>
+              <th class="th-equipo">Equipo</th>
+              <th title="Partidos Jugados">MP</th>
+              <th title="Victorias">W</th>
+              <th title="Empates">D</th>
+              <th title="Derrotas">L</th>
+              <th title="Goles a Favor">GF</th>
+              <th title="Goles en Contra">GA</th>
+              <th title="Diferencia de Goles">GD</th>
+              <th title="Puntos">Pts</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pos of posicionesGrupoActivo; let i = index"
+              [class]="getClasificacion(i)">
+              <td class="td-pos">
+                <span class="pos-num">{{ i + 1 }}</span>
+              </td>
+              <td class="td-equipo">
+                <img *ngIf="pos.EscudoURL" [src]="pos.EscudoURL"
+                  [alt]="pos.NombreEquipo" class="escudo"/>
+                <strong>{{ pos.NombreEquipo }}</strong>
+              </td>
+              <td>{{ pos.PartidosJugados }}</td>
+              <td>{{ pos.Ganados }}</td>
+              <td>{{ pos.Empatados }}</td>
+              <td>{{ pos.Perdidos }}</td>
+              <td>{{ pos.GolesAFavor }}</td>
+              <td>{{ pos.GolesEnContra }}</td>
+              <td [class.positivo]="pos.GolesAFavor - pos.GolesEnContra > 0"
+                  [class.negativo]="pos.GolesAFavor - pos.GolesEnContra < 0">
+                {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}{{ pos.GolesAFavor - pos.GolesEnContra }}
+              </td>
+              <td class="td-pts"><strong>{{ pos.Puntos }}</strong></td>
+            </tr>
+            <tr *ngIf="posicionesGrupoActivo.length === 0">
+              <td colspan="10" class="sin-datos">
+                Sin equipos registrados en el Grupo {{ grupoActivo }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="abreviaturas">
+          <span><strong>MP</strong> Partidos jugados</span>
+          <span><strong>W</strong> Victorias</span>
+          <span><strong>D</strong> Empates</span>
+          <span><strong>L</strong> Derrotas</span>
+          <span><strong>GF</strong> Goles a favor</span>
+          <span><strong>GA</strong> Goles en contra</span>
+          <span><strong>GD</strong> Diferencia de goles</span>
+          <span><strong>Pts</strong> Puntos</span>
+        </div>
+      </div>
+
+      <div class="todos-grupos">
+        <h3 class="todos-titulo">📊 Resumen General</h3>
+        <div class="grupos-grid">
+          <div *ngFor="let g of todosLosGrupos" class="grupo-mini-card">
+            <div class="grupo-mini-header">
+              <span>Grupo {{ g.grupo }}</span>
+            </div>
+            <table class="mini-table">
+              <thead>
+                <tr>
+                  <th>Equipo</th>
+                  <th>MP</th>
+                  <th>Pts</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let eq of g.equipos; let i = index"
+                  [class.mini-clasifica]="i < 2">
+                  <td>
+                    <img *ngIf="eq.EscudoURL" [src]="eq.EscudoURL"
+                      [alt]="eq.NombreEquipo" class="escudo-mini"/>
+                    {{ eq.NombreEquipo }}
+                  </td>
+                  <td>{{ eq.PartidosJugados }}</td>
+                  <td><strong>{{ eq.Puntos }}</strong></td>
+                </tr>
+                <tr *ngIf="g.equipos.length === 0">
+                  <td colspan="3" class="sin-datos-mini">Sin datos</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
+  <!-- TAB BRACKET -->
+  <div *ngIf="tabActiva === 'bracket'">
+
+    <div class="tp-loading" *ngIf="cargandoBracket">
+      <div class="spinner"></div>
+      <span>Cargando eliminatorias...</span>
+    </div>
+
+    <div *ngIf="!cargandoBracket">
+
+      <div *ngIf="fasesConPartidos.length === 0" class="bracket-vacio">
+        <i class="bi bi-diagram-3"></i>
+        <p>No hay partidos eliminatorios registrados aún</p>
+        <span>Cuando el admin registre partidos de Dieciseisavos, Octavos, Cuartos, Semifinal o Final aparecerán aquí</span>
+      </div>
+
+      <div *ngIf="fasesConPartidos.length > 0" class="bracket-container">
+
+        <div *ngFor="let fase of fasesConPartidos" class="bracket-fase">
+
+          <div class="bracket-fase-header">
+            <h3>{{ getFaseLabel(fase) }}</h3>
+            <span class="bracket-fase-count">
+              {{ eliminatorias[fase].length }} partido{{ eliminatorias[fase].length !== 1 ? 's' : '' }}
+            </span>
+          </div>
+
+          <div class="bracket-partidos"
+            [class.bracket-final]="fase === 'Final'"
+            [class.bracket-tercer]="fase === 'Tercer puesto'">
+
+            <div *ngFor="let p of eliminatorias[fase]"
+              class="bracket-partido"
+              [class.finalizado]="p.Estado_Juego === 'Finalizado'"
+              [class.en-curso]="p.Estado_Juego === 'En curso'">
+
+              <!-- EQUIPO LOCAL -->
+              <div class="bracket-equipo"
+                [class.ganador]="getGanador(p) === 'local'">
+                <img *ngIf="p.EscudoLocal" [src]="p.EscudoLocal"
+                  [alt]="p.NombreLocal" class="bracket-escudo"/>
+                <span class="bracket-nombre">{{ p.NombreLocal }}</span>
+                <div class="bracket-marcador"
+                  *ngIf="p.Estado_Juego === 'Finalizado' || p.Estado_Juego === 'En curso'">
+                  <span class="bracket-gol">{{ p.GolesLocal ?? '-' }}</span>
+                  <span class="bracket-penal"
+                    *ngIf="p.PenalesLocal !== null && p.PenalesLocal !== undefined">
+                    ({{ p.PenalesLocal }})
+                  </span>
+                </div>
+              </div>
+
+              <!-- SEPARADOR -->
+              <div class="bracket-sep">
+                <span *ngIf="p.Estado_Juego === 'Programado'" class="bracket-fecha">
+                  {{ p.FechaPartido | date:'dd/MM HH:mm' }}
+                </span>
+                <span *ngIf="p.Estado_Juego === 'En curso'" class="bracket-vivo">
+                  🔴 EN VIVO
+                </span>
+                <span *ngIf="p.Estado_Juego === 'Finalizado'" class="bracket-fin">
+                  FT
+                </span>
+              </div>
+
+              <!-- EQUIPO VISITANTE -->
+              <div class="bracket-equipo visitante"
+                [class.ganador]="getGanador(p) === 'visitante'">
+                <img *ngIf="p.EscudoVisitante" [src]="p.EscudoVisitante"
+                  [alt]="p.NombreVisitante" class="bracket-escudo"/>
+                <span class="bracket-nombre">{{ p.NombreVisitante }}</span>
+                <div class="bracket-marcador"
+                  *ngIf="p.Estado_Juego === 'Finalizado' || p.Estado_Juego === 'En curso'">
+                  <span class="bracket-gol">{{ p.GolesVisitante ?? '-' }}</span>
+                  <span class="bracket-penal"
+                    *ngIf="p.PenalesVisitante !== null && p.PenalesVisitante !== undefined">
+                    ({{ p.PenalesVisitante }})
+                  </span>
+                </div>
+              </div>
+
+              <!-- PENALES LABEL -->
+              <div class="bracket-penales-label"
+                *ngIf="p.PenalesLocal !== null && p.PenalesLocal !== undefined">
+                <i class="bi bi-crosshair"></i> Definido por penales
+              </div>
+
+              <!-- ESTADIO -->
+              <div class="bracket-estadio" *ngIf="p.Estadio">
+                <i class="bi bi-geo-alt-fill"></i> {{ p.Estadio }}
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <app-start></app-start>

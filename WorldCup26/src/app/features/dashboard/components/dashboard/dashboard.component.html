@@ -97,7 +97,7 @@
                   <span class="fecha-dot" style="background:#e94560"></span>
                   <div>
                     <strong>Gran Final</strong>
-                    <small>26 Jul 2026 — MetLife Stadium</small>
+                    <small>26 Jul 2026 &#8212; MetLife Stadium</small>
                   </div>
                 </div>
               </div>
@@ -105,83 +105,11 @@
 
           </div>
 
-          <!-- FASES -->
-          <div class="info-box">
-            <h4>🏆 Fases del Torneo</h4>
-            <div class="fases-grid">
-              <div class="fase-item fase-grupos">
-                <span class="fase-num">1</span>
-                <div>
-                  <strong>Fase de Grupos</strong>
-                  <small>12 grupos · 48 equipos</small>
-                  <small>11 Jun — 3 Jul</small>
-                </div>
-              </div>
-              <div class="fase-arrow">→</div>
-              <div class="fase-item fase-32">
-                <span class="fase-num">2</span>
-                <div>
-                  <strong>Dieciseisavos</strong>
-                  <small>32 equipos</small>
-                  <small>4 — 7 Jul</small>
-                </div>
-              </div>
-              <div class="fase-arrow">→</div>
-              <div class="fase-item fase-16">
-                <span class="fase-num">3</span>
-                <div>
-                  <strong>Octavos</strong>
-                  <small>16 equipos</small>
-                  <small>8 — 11 Jul</small>
-                </div>
-              </div>
-              <div class="fase-arrow">→</div>
-              <div class="fase-item fase-8">
-                <span class="fase-num">4</span>
-                <div>
-                  <strong>Cuartos</strong>
-                  <small>8 equipos</small>
-                  <small>14 — 15 Jul</small>
-                </div>
-              </div>
-              <div class="fase-arrow">→</div>
-              <div class="fase-item fase-4">
-                <span class="fase-num">5</span>
-                <div>
-                  <strong>Semifinal</strong>
-                  <small>4 equipos</small>
-                  <small>18 — 19 Jul</small>
-                </div>
-              </div>
-              <div class="fase-arrow">→</div>
-              <div class="fase-item fase-final">
-                <span class="fase-num">🏆</span>
-                <div>
-                  <strong>Final</strong>
-                  <small>2 equipos</small>
-                  <small>26 Jul</small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- GRUPOS -->
-          <div class="info-box">
-            <h4>🌍 Grupos — Copa del Mundo 2026</h4>
-            <p class="grupos-desc">
-              48 selecciones divididas en <strong>12 grupos</strong> de 4 equipos.
-              Clasifican los <strong>2 primeros</strong> de cada grupo más los
-              <strong>8 mejores terceros</strong>.
-            </p>
-            <div class="grupos-grid">
-              <div *ngFor="let g of grupos" class="grupo-badge">Grupo {{ g }}</div>
-            </div>
-          </div>
 
           <!-- CARRUSEL TABLA DE POSICIONES -->
           <div class="info-box carrusel-box">
             <div class="carrusel-header">
-              <h4>📊 Tabla de Posiciones — Fase de Grupos</h4>
+              <h4>📊 Tabla de Posiciones &#8212; Fase de Grupos</h4>
               <span class="grupo-activo-badge">Grupo {{ grupoCarrusel }}</span>
             </div>
 
@@ -195,43 +123,45 @@
             </div>
 
             <div class="carrusel-tabla">
-              <table class="table table-dark table-hover mb-0"
-                *ngIf="posicionesGrupoCarrusel.length > 0">
+              <table class="tp-table" *ngIf="posicionesGrupoCarrusel.length > 0">
                 <thead>
                   <tr>
-                    <th>#</th>
-                    <th>Equipo</th>
-                    <th>PJ</th>
-                    <th>G</th>
-                    <th>E</th>
-                    <th>P</th>
-                    <th>GF</th>
-                    <th>GC</th>
-                    <th>DIF</th>
-                    <th>PTS</th>
+                    <th class="th-pos">#</th>
+                    <th class="th-equipo">Equipo</th>
+                    <th title="Partidos Jugados">MP</th>
+                    <th title="Victorias">W</th>
+                    <th title="Empates">D</th>
+                    <th title="Derrotas">L</th>
+                    <th title="Goles a Favor">GF</th>
+                    <th title="Goles en Contra">GA</th>
+                    <th title="Diferencia de Goles">GD</th>
+                    <th title="Puntos">Pts</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let pos of posicionesGrupoCarrusel; let i = index"
-                    [class.fila-clasifica]="i < 2">
-                    <td>
-                      <span *ngIf="i < 2">🟢</span>
-                      <span *ngIf="i >= 2">⚪</span>
-                      {{ i + 1 }}
+                    [class.clasifica-directo]="i < 2">
+                    <td class="td-pos">
+                      <span class="pos-num">{{ i + 1 }}</span>
                     </td>
-                    <td><strong>{{ pos.NombreEquipo }}</strong></td>
+                    <td class="td-equipo">
+                      <img *ngIf="pos.EscudoURL" [src]="pos.EscudoURL"
+                        [alt]="pos.NombreEquipo" class="escudo"/>
+                      <strong>{{ pos.NombreEquipo }}</strong>
+                    </td>
                     <td>{{ pos.PartidosJugados }}</td>
                     <td>{{ pos.Ganados }}</td>
                     <td>{{ pos.Empatados }}</td>
                     <td>{{ pos.Perdidos }}</td>
                     <td>{{ pos.GolesAFavor }}</td>
                     <td>{{ pos.GolesEnContra }}</td>
-                    <td [class.text-success]="pos.GolesAFavor - pos.GolesEnContra > 0"
-                        [class.text-danger]="pos.GolesAFavor - pos.GolesEnContra < 0">
-                      {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}
-                      {{ pos.GolesAFavor - pos.GolesEnContra }}
+                    <td [class.positivo]="pos.GolesAFavor - pos.GolesEnContra > 0"
+                        [class.negativo]="pos.GolesAFavor - pos.GolesEnContra < 0">
+                      {{ pos.GolesAFavor - pos.GolesEnContra > 0 ? '+' : '' }}{{ pos.GolesAFavor - pos.GolesEnContra }}
                     </td>
-                    <td><strong class="text-warning">{{ pos.Puntos }}</strong></td>
+                    <td class="td-pts">
+                      <strong>{{ pos.Puntos }}</strong>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -241,7 +171,25 @@
               </div>
             </div>
 
-            <small class="clasifican-texto">🟢 Clasifican a la siguiente ronda</small>
+            <!-- LEYENDA -->
+            <div class="carrusel-leyenda">
+              <span class="leyenda-item">
+                <span class="dot verde"></span> Clasifican a la siguiente ronda
+              </span>
+            </div>
+
+            <!-- ABREVIATURAS -->
+            <div class="abreviaturas">
+              <span><strong>MP</strong> Partidos jugados</span>
+              <span><strong>W</strong> Victorias</span>
+              <span><strong>D</strong> Empates</span>
+              <span><strong>L</strong> Derrotas</span>
+              <span><strong>GF</strong> Goles a favor</span>
+              <span><strong>GA</strong> Goles en contra</span>
+              <span><strong>GD</strong> Diferencia de goles</span>
+              <span><strong>Pts</strong> Puntos</span>
+            </div>
+
           </div>
 
         </div>

@@ -1,0 +1,160 @@
+<div class="pred-container">
+
+  <div class="pred-header">
+    <div class="pred-header-left">
+      <img src="assets/Logo.png" alt="Logo" class="pred-logo"/>
+      <div>
+        <h2>Historial de Predicciones</h2>
+        <span class="pred-subtitle">FIFA World Cup 2026</span>
+      </div>
+    </div>
+    <div class="pred-badge">
+      🕐 {{ historial.length + historialTorneo.length }} predicciones
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="hist-tabs">
+    <button class="hist-tab"
+      [class.activo]="tabActiva === 'partido'"
+      (click)="tabActiva = 'partido'">
+      ⚽ Partidos
+      <span class="tab-count">{{ historial.length }}</span>
+    </button>
+    <button class="hist-tab"
+      [class.activo]="tabActiva === 'torneo'"
+      (click)="tabActiva = 'torneo'">
+      🏆 Torneo
+      <span class="tab-count">{{ historialTorneo.length }}</span>
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div class="pred-loading-eq" *ngIf="cargando">
+    <div class="spinner-sm"></div>
+    <span>Cargando historial...</span>
+  </div>
+
+  <div *ngIf="!cargando">
+
+    <!-- TAB PARTIDOS -->
+    <div *ngIf="tabActiva === 'partido'">
+      <div *ngIf="historial.length === 0" class="sin-datos">
+        <i class="bi bi-clock-history"></i>
+        <p>No hay predicciones de partido aún</p>
+      </div>
+
+      <div class="hist-lista">
+        <div *ngFor="let p of historial" class="hist-card">
+
+          <div class="hist-card-header">
+            <div class="hist-equipos">
+              <span class="hist-equipo"
+                [class.ganador]="p.predictedWinner === p.homeTeamName">
+                {{ p.homeTeamName || 'Local' }}
+              </span>
+              <span class="hist-vs">vs</span>
+              <span class="hist-equipo"
+                [class.ganador]="p.predictedWinner === p.awayTeamName">
+                {{ p.awayTeamName || 'Visitante' }}
+              </span>
+            </div>
+            <div class="hist-meta">
+              <span class="hist-fecha">{{ formatearFecha(p.predictionDate) }}</span>
+              <span class="hist-modelo openai">OpenAI</span>
+            </div>
+          </div>
+
+          <div class="hist-resultado">
+            <div class="hist-ganador">
+              🏆 <strong>{{ p.predictedWinner }}</strong>
+            </div>
+            <div class="hist-probs">
+              <span class="prob-item local">
+                {{ p.homeWinProbability | number:'1.1-1' }}%
+              </span>
+              <span class="prob-sep">·</span>
+              <span class="prob-item empate">
+                {{ p.drawProbability | number:'1.1-1' }}% E
+              </span>
+              <span class="prob-sep">·</span>
+              <span class="prob-item visitante">
+                {{ p.awayWinProbability | number:'1.1-1' }}%
+              </span>
+            </div>
+            <div class="hist-confianza">
+              Confianza: <strong>{{ p.confidence | number:'1.1-1' }}%</strong>
+            </div>
+          </div>
+
+          <div class="hist-explicacion-toggle"
+            (click)="toggleExplicacion(p.id)">
+            <i class="bi"
+              [class.bi-chevron-down]="prediccionExpandida !== p.id"
+              [class.bi-chevron-up]="prediccionExpandida === p.id"></i>
+            {{ prediccionExpandida === p.id ? 'Ocultar' : 'Ver' }} explicación
+          </div>
+
+          <div class="hist-explicacion" *ngIf="prediccionExpandida === p.id">
+            <span class="hist-exp-label">🤖 OpenAI</span>
+            <p>{{ p.reasoning }}</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB TORNEO -->
+    <div *ngIf="tabActiva === 'torneo'">
+      <div *ngIf="historialTorneo.length === 0" class="sin-datos">
+        <i class="bi bi-trophy"></i>
+        <p>No hay predicciones de torneo aún</p>
+      </div>
+
+      <div class="hist-lista">
+        <div *ngFor="let p of historialTorneo" class="hist-card torneo">
+
+          <div class="hist-card-header">
+            <div class="hist-campeon-label">🏆 Campeón predicho</div>
+            <div class="hist-meta">
+              <span class="hist-fecha">{{ formatearFecha(p.predictionDate) }}</span>
+              <span class="hist-modelo openai">OpenAI</span>
+            </div>
+          </div>
+
+          <div class="hist-resultado">
+            <div class="hist-ganador campeon">
+              👑 <strong>{{ p.predictedWinner }}</strong>
+            </div>
+            <div class="hist-confianza">
+              Confianza: <strong>{{ p.confidence | number:'1.1-1' }}%</strong>
+            </div>
+          </div>
+
+          <!-- TOP 4 -->
+          <div class="hist-top4" *ngIf="p.top4">
+            <span class="hist-top4-label">Top 4:</span>
+            <span class="hist-top4-valor">{{ p.top4 }}</span>
+          </div>
+
+          <div class="hist-explicacion-toggle"
+            (click)="toggleExplicacion(p.id)">
+            <i class="bi"
+              [class.bi-chevron-down]="prediccionExpandida !== p.id"
+              [class.bi-chevron-up]="prediccionExpandida === p.id"></i>
+            {{ prediccionExpandida === p.id ? 'Ocultar' : 'Ver' }} análisis
+          </div>
+
+          <div class="hist-explicacion" *ngIf="prediccionExpandida === p.id">
+            <span class="hist-exp-label">🤖 OpenAI</span>
+            <p>{{ p.reasoning }}</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <app-start></app-start>
+</div>

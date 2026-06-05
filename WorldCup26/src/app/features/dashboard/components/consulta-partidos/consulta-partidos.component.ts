@@ -27,7 +27,6 @@ export class ConsultaPartidosComponent implements OnInit, OnDestroy {
   estados = ['Programado','En curso','Finalizado','Suspendido'];
   vistaActiva: 'todos' | 'finalizados' | 'proximos' = 'todos';
 
-  // Detalle del partido
   partidoDetalle: any = null;
   estadisticasDetalle: any[] = [];
   eventosDetalle: any[] = [];
@@ -59,6 +58,18 @@ export class ConsultaPartidosComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  // Muestra la fecha tal como viene del servidor sin conversión de zona horaria
+  formatearFechaDisplay(fecha: any): string {
+    if (!fecha) return '—';
+    const str = typeof fecha === 'string' ? fecha : fecha.toString();
+    const limpia = str.replace('T', ' ').replace('Z', '').split('.')[0];
+    const partes = limpia.split(' ');
+    if (partes.length < 2) return str;
+    const [anio, mes, dia] = partes[0].split('-');
+    const [hora, minuto] = partes[1].split(':');
+    return `${dia}/${mes}/${anio} ${hora}:${minuto}`;
   }
 
   get partidosFiltrados() {
@@ -103,13 +114,11 @@ export class ConsultaPartidosComponent implements OnInit, OnDestroy {
     this.eventosDetalle = [];
     this.cargandoDetalle = true;
 
-    // Cargar estadísticas
     this.api.get<any[]>(`/cup/GetEstadisticas/${p.PartidoID}`).subscribe({
       next: (data: any[]) => this.estadisticasDetalle = data,
       error: () => {}
     });
 
-    // Cargar eventos
     this.api.get<any[]>(`/cup/GetEventosPartido/${p.PartidoID}`).subscribe({
       next: (data: any[]) => {
         this.eventosDetalle = data;
@@ -180,25 +189,22 @@ export class ConsultaPartidosComponent implements OnInit, OnDestroy {
     return iconos[tipo] || '📋';
   }
 
+  getClaseEvento(tipo: string): string {
+    const clases: any = {
+      'GOL':             'evento-gol',
+      'PENALTI':         'evento-gol',
+      'TARJETA_AMARILLA':'evento-amarilla',
+      'TARJETA_ROJA':    'evento-roja',
+      'MEDIO_TIEMPO':    'evento-tiempo',
+      'FIN':             'evento-fin',
+      'INICIO':          'evento-inicio',
+    };
+    return clases[tipo] || 'evento-normal';
+  }
+
   limpiarFiltros() {
     this.filtroFase = '';
     this.filtroEstado = '';
     this.filtroEquipo = '';
   }
-
-  getClaseEvento(tipo: string): string {
-  const clases: any = {
-    'GOL':             'evento-gol',
-    'PENALTI':         'evento-gol',
-    'TARJETA_AMARILLA':'evento-amarilla',
-    'TARJETA_ROJA':    'evento-roja',
-    'MEDIO_TIEMPO':    'evento-tiempo',
-    'FIN':             'evento-fin',
-    'INICIO':          'evento-inicio',
-  };
-  return clases[tipo] || 'evento-normal';
-  }
-
-
-
 }

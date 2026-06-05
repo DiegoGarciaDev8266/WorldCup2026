@@ -15,8 +15,29 @@ router.put('/RegistrarResultado', async (req, res) => {
 
 router.get('/GetTablaPosiciones', async (req, res) => {
   try {
-    res.json(await resultadoService.obtenerPosiciones());
+    const { sql } = require('../config/db');
+    const request = new sql.Request();
+    const result = await request.query(`
+      SELECT 
+        E.EquipoID,
+        E.NombreEquipo,
+        E.EscudoURL,
+        E.Grupo,
+        ISNULL(P.PartidosJugados, 0) AS PartidosJugados,
+        ISNULL(P.Ganados, 0)         AS Ganados,
+        ISNULL(P.Empatados, 0)       AS Empatados,
+        ISNULL(P.Perdidos, 0)        AS Perdidos,
+        ISNULL(P.GolesAFavor, 0)     AS GolesAFavor,
+        ISNULL(P.GolesEnContra, 0)   AS GolesEnContra,
+        ISNULL(P.Puntos, 0)          AS Puntos
+      FROM TBL_EQUIPOS E
+      LEFT JOIN TBL_POSICIONES P ON E.EquipoID = P.EquipoID
+      WHERE E.Estado = 'ACT'
+      ORDER BY E.Grupo, ISNULL(P.Puntos, 0) DESC
+    `);
+    res.json(result.recordset);
   } catch (error) {
+    console.error('Error GetTablaPosiciones:', error);
     res.status(500).json({ message: "Error al obtener tabla de posiciones" });
   }
 });

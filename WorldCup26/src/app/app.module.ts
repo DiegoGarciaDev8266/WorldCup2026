@@ -22,7 +22,10 @@ import { RegistroResultadosComponent } from './features/configuration/components
 import { TablaPosicionesComponent } from './features/dashboard/components/tabla-posiciones/tabla-posiciones.component';
 import { ConsultaPartidosComponent } from './features/dashboard/components/consulta-partidos/consulta-partidos.component';
 import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo.component';
-
+import { PrediccionPartidoComponent } from './features/predicciones/components/prediccion-partido/prediccion-partido.component';
+import { PrediccionCampeonComponent } from './features/predicciones/components/prediccion-campeon/prediccion-campeon.component';
+import { PrediccionHistorialComponent } from './features/predicciones/components/prediccion-historial/prediccion-historial.component';
+import { SocketService } from './core/services/socket.service';
 
 @NgModule({
   declarations: [
@@ -38,7 +41,10 @@ import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo
     RegistroResultadosComponent,
     TablaPosicionesComponent,
     ConsultaPartidosComponent,
-    EnVivoComponent
+    EnVivoComponent,
+    PrediccionPartidoComponent,
+    PrediccionCampeonComponent,
+    PrediccionHistorialComponent
   ],
   imports: [
     BrowserModule,
@@ -51,7 +57,9 @@ import { EnVivoComponent } from './features/dashboard/components/en-vivo/en-vivo
     BrowserAnimationsModule,
     ToastrModule.forRoot()
   ],
-  providers: [],
+  providers: [
+    SocketService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

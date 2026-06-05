@@ -13,7 +13,7 @@ const auditoriaService = {
         Descripcion
       );
     } catch (error) {
-      console.error('❌ Error registrando auditoría:', error);
+      console.error('Error registrando auditoría:', error);
     }
   }
 };

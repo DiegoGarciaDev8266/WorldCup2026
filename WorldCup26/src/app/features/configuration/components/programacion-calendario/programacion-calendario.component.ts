@@ -36,13 +36,18 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
   golesLocal = 0;
   golesVisitante = 0;
 
-  // Estadísticas
+  // ==== NUEVAS PROPIEDADES AGREGADAS PARA REPARAR EL ERROR ====
+  penalesLocal = 0;
+  penalesVisitante = 0;
+  esFaseEliminatoria = false;
+  hayEmpate = false;
+  // ============================================================
+
   partidoEstadisticas: any = null;
   estadisticasDetalle: any[] = [];
   eventosDetalle: any[] = [];
   cargandoDetalle = false;
 
-  // Modal eliminar partido
   partidoAEliminar: any = null;
 
   private destroy$ = new Subject<void>();
@@ -94,12 +99,22 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
     );
   }
 
-  // Convierte fecha local del input a formato SQL Server sin conversión UTC
+  // Convierte fecha del input datetime-local a formato SQL sin conversión UTC
   private formatearFecha(fechaLocal: string): string {
     if (!fechaLocal) return '';
-    // datetime-local da formato "2026-06-04T23:30"
-    // Lo convertimos a "2026-06-04 23:30:00" para SQL Server
     return fechaLocal.replace('T', ' ') + ':00';
+  }
+
+  // Muestra la fecha tal como viene del servidor sin conversión de zona horaria
+  formatearFechaDisplay(fecha: any): string {
+    if (!fecha) return '—';
+    const str = typeof fecha === 'string' ? fecha : fecha.toString();
+    const limpia = str.replace('T', ' ').replace('Z', '').split('.')[0];
+    const partes = limpia.split(' ');
+    if (partes.length < 2) return str;
+    const [anio, mes, dia] = partes[0].split('-');
+    const [hora, minuto] = partes[1].split(':');
+    return `${dia}/${mes}/${anio} ${hora}:${minuto}`;
   }
 
   onSubmit() {
@@ -113,7 +128,6 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
       return;
     }
 
-    // Ajuste de zona horaria — enviar fecha local sin conversión UTC
     const partidoAEnviar = {
       ...this.partido,
       FechaPartido: this.formatearFecha(this.partido.FechaPartido)
@@ -139,26 +153,20 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
   verPartido(p: any) { this.partidoVer = { ...p }; }
 
   editarPartido(p: any) {
-  this.modoEdicion = true;
-  
-  let fechaFormateada = '';
-  if (p.FechaPartido) {
-    const d = new Date(p.FechaPartido);
-    
-   
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    const hours = String(d.getHours()).padStart(2, '0');
-    const minutes = String(d.getMinutes()).padStart(2, '0');
-    
-    
-    fechaFormateada = `${year}-${month}-${day}T${hours}:${minutes}`;
-  }
+    this.modoEdicion = true;
 
-  this.partido = { ...p, FechaPartido: fechaFormateada };
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
+    let fechaFormateada = '';
+    if (p.FechaPartido) {
+      const str = typeof p.FechaPartido === 'string'
+        ? p.FechaPartido
+        : p.FechaPartido.toString();
+      const limpia = str.replace('Z', '').split('.')[0];
+      fechaFormateada = limpia.replace(' ', 'T').slice(0, 16);
+    }
+
+    this.partido = { ...p, FechaPartido: fechaFormateada };
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 
   abrirModalEliminar(p: any) {
     this.partidoAEliminar = p;
@@ -212,6 +220,15 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
     this.golesLocal = p.GolesLocal ?? 0;
     this.golesVisitante = p.GolesVisitante ?? 0;
     this.partidoEstadisticas = null;
+
+    // Evaluamos dinámicamente si la fase seleccionada es de eliminación directa
+    this.esFaseEliminatoria = this.fasesEliminacion.some(fase => 
+      p.Fase?.toLowerCase().includes(fase.toLowerCase())
+    );
+
+    // Corremos la validación inicial de goles por si ya viene empatado de la BD
+    this.onGolesChange();
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -219,7 +236,23 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
     this.partidoSeleccionado = null;
     this.golesLocal = 0;
     this.golesVisitante = 0;
+    this.penalesLocal = 0;
+    this.penalesVisitante = 0;
+    this.hayEmpate = false;
+    this.esFaseEliminatoria = false;
   }
+
+  // ==== NUEVO MÉTODO AGREGADO PARA REPARAR EL ERROR ====
+  onGolesChange() {
+    this.hayEmpate = this.golesLocal === this.golesVisitante;
+    
+    // Si se rompe el empate, limpiamos los campos de penales por seguridad
+    if (!this.hayEmpate) {
+      this.penalesLocal = 0;
+      this.penalesVisitante = 0;
+    }
+  }
+  // ====================================================
 
   registrarResultado() {
     if (!this.partidoSeleccionado) return;
@@ -228,6 +261,14 @@ export class ProgramacionCalendarioComponent implements OnInit, OnDestroy {
       return;
     }
 
+    // Validación extra: si es eliminación y hay empate, los penales no pueden quedar iguales
+    if (this.esFaseEliminatoria && this.hayEmpate && this.penalesLocal === this.penalesVisitante) {
+      this.toastr.error('❌ En fase eliminatoria debe haber un ganador en los penales');
+      return;
+    }
+
+    // Nota: Si tu backend requiere recibir PenalesLocal y PenalesVisitante, 
+    // puedes agregarlos aquí al objeto que se envía.
     this.resultadosService.registrarResultado({
       PartidoID: this.partidoSeleccionado.PartidoID,
       GolesLocal: this.golesLocal,

@@ -8,94 +8,113 @@
   </div>
 
   <ul class="menu">
-
-    <li routerLink="/Dashboard" routerLinkActive="active-item">
+    <li routerLink="/Dashboard" routerLinkActive="active-item" title="Estadísticas Generales">
       <i class="bi bi-globe icon"></i>
       <span class="text">Estadísticas Generales</span>
     </li>
-
-    <li routerLink="/tabla-posiciones" routerLinkActive="active-item">
+    <li routerLink="/tabla-posiciones" routerLinkActive="active-item" title="Tabla posiciones">
       <i class="bi bi-bar-chart-fill icon"></i>
       <span class="text">Tabla posiciones</span>
     </li>
-
-    <li routerLink="/consulta-partidos" routerLinkActive="active-item">
+    <li routerLink="/consulta-partidos" routerLinkActive="active-item" title="Consulta partidos">
       <i class="bi bi-calendar icon"></i>
       <span class="text">Consulta partidos</span>
     </li>
-
-    <li routerLink="/en-vivo" routerLinkActive="active-item">
+    <li routerLink="/en-vivo" routerLinkActive="active-item" title="En vivo">
       <i class="bi bi-broadcast icon"></i>
       <span class="text">En vivo</span>
       <span class="vivo-dot" *ngIf="hayPartidosEnVivo"></span>
     </li>
 
-    <!-- PREDICCIONES -->
-    <li (click)="isExpanded && toggleSub('pred')"
-      [class.active-item]="subMenu.pred">
+    <!-- PREDICCIONES — FIX: removido "isExpanded &&" -->
+    <li (click)="toggleSub('pred')"
+      [class.active-item]="subMenu.pred"
+      title="Predicciones"
+      class="has-submenu">
       <i class="bi bi-robot icon"></i>
       <span class="text">
         Predicciones
         <i [class]="subMenu.pred ? 'bi bi-caret-up-fill ms-1' : 'bi bi-caret-down-fill ms-1'"></i>
       </span>
+      <div class="submenu-popup" *ngIf="!isExpanded">
+        <span class="popup-titulo">Predicciones</span>
+        <a routerLink="/prediccion-partido" (click)="$event.stopPropagation()">
+          <i class="bi bi-lightning-fill"></i> Ganador partido
+        </a>
+        <a routerLink="/prediccion-campeon" (click)="$event.stopPropagation()">
+          <i class="bi bi-trophy-fill"></i> Campeón torneo
+        </a>
+        <a routerLink="/prediccion-historial" (click)="$event.stopPropagation()">
+          <i class="bi bi-clock-history"></i> Historial
+        </a>
+      </div>
     </li>
-
     <div class="submenu-wrapper" *ngIf="subMenu.pred && isExpanded">
       <ul class="submenu">
         <li routerLink="/prediccion-partido" routerLinkActive="active-sub">
-          <i class="bi bi-lightning-fill sub-icon"></i>
-          Ganador partido
+          <i class="bi bi-lightning-fill sub-icon"></i> Ganador partido
         </li>
         <li routerLink="/prediccion-campeon" routerLinkActive="active-sub">
-          <i class="bi bi-trophy-fill sub-icon"></i>
-          Campeón torneo
+          <i class="bi bi-trophy-fill sub-icon"></i> Campeón torneo
         </li>
-        <li routerLink="/prediccion-info" routerLinkActive="active-sub">
-          <i class="bi bi-info-circle-fill sub-icon"></i>
-          Explicación
+        <li routerLink="/prediccion-historial" routerLinkActive="active-sub">
+          <i class="bi bi-clock-history sub-icon"></i> Historial
         </li>
       </ul>
     </div>
 
-    <!-- CONFIG — solo visible para admin -->
-    <li (click)="isExpanded && toggleSub('config')" *ngIf="esAdmin"
-      [class.active-item]="subMenu.config">
+    <!-- CONFIG — FIX: removido "isExpanded &&" -->
+    <li (click)="toggleSub('config')" *ngIf="esAdmin"
+      [class.active-item]="subMenu.config"
+      title="Configuración"
+      class="has-submenu">
       <i class="bi bi-gear icon"></i>
       <span class="text">
         Configuración
         <i [class]="subMenu.config ? 'bi bi-caret-up-fill ms-1' : 'bi bi-caret-down-fill ms-1'"></i>
       </span>
+      <div class="submenu-popup" *ngIf="!isExpanded">
+        <span class="popup-titulo">Configuración</span>
+        <a routerLink="/Register_UserConfig" (click)="$event.stopPropagation()">
+          <i class="bi bi-person-fill"></i> Registro de usuarios
+        </a>
+        <a routerLink="/gestion-roles" (click)="$event.stopPropagation()">
+          <i class="bi bi-shield-fill"></i> Gestión de roles
+        </a>
+        <a routerLink="/gestion-selecciones" (click)="$event.stopPropagation()">
+          <i class="bi bi-flag-fill"></i> Registro de equipos
+        </a>
+        <a routerLink="/programacion-calendario" (click)="$event.stopPropagation()">
+          <i class="bi bi-calendar-check-fill"></i> Registro de partidos
+        </a>
+        <a routerLink="/registro-resultados" (click)="$event.stopPropagation()">
+          <i class="bi bi-clipboard-check-fill"></i> Log de Auditoría
+        </a>
+      </div>
     </li>
-
     <div class="submenu-wrapper" *ngIf="subMenu.config && isExpanded && esAdmin">
       <ul class="submenu">
         <li routerLink="/Register_UserConfig" routerLinkActive="active-sub">
-          <i class="bi bi-person-fill sub-icon"></i>
-          Registro de usuarios
+          <i class="bi bi-person-fill sub-icon"></i> Registro de usuarios
         </li>
         <li routerLink="/gestion-roles" routerLinkActive="active-sub">
-          <i class="bi bi-shield-fill sub-icon"></i>
-          Gestión de roles
+          <i class="bi bi-shield-fill sub-icon"></i> Gestión de roles
         </li>
         <li routerLink="/gestion-selecciones" routerLinkActive="active-sub">
-          <i class="bi bi-flag-fill sub-icon"></i>
-          Registro de equipos
+          <i class="bi bi-flag-fill sub-icon"></i> Registro de equipos
         </li>
         <li routerLink="/programacion-calendario" routerLinkActive="active-sub">
-          <i class="bi bi-calendar-check-fill sub-icon"></i>
-          Registro de partidos y resultados
+          <i class="bi bi-calendar-check-fill sub-icon"></i> Registro de partidos y resultados
         </li>
         <li routerLink="/registro-resultados" routerLinkActive="active-sub">
-          <i class="bi bi-clipboard-check-fill sub-icon"></i>
-          Log de Auditoría
+          <i class="bi bi-clipboard-check-fill sub-icon"></i> Log de Auditoría
         </li>
       </ul>
     </div>
 
-    <li (click)="Salir()">
+    <li (click)="Salir()" title="Cerrar sesión">
       <i class="bi bi-door-open icon"></i>
       <span class="text">Cerrar sesión</span>
     </li>
-
   </ul>
 </div>
