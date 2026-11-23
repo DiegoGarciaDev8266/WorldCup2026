@@ -17,7 +17,7 @@ Plataforma web full stack para gestionar el Mundial FIFA 2026 (48 selecciones, 1
 - **Historial por usuario** de predicciones.
 - **Log de auditoría** de acciones administrativas y de predicciones.
 
-## 🧱 Arquitectura
+## Arquitectura
 
 ```
 Angular (4200) ──HTTP/WebSocket──▶ Node.js + Express (3000) ──▶ SQL Server
@@ -39,7 +39,7 @@ Angular (4200) ──HTTP/WebSocket──▶ Node.js + Express (3000) ──▶ 
 
 El puntaje de cada equipo combina 70 % tasa de victorias y 30 % promedio de goles. La probabilidad de empate es dinámica (mayor cuando los equipos son parejos). Un modelo de lenguaje (OpenAI `gpt-4.1-mini`) redacta la explicación; Gemini está integrado mediante la misma interfaz.
 
-## 👥 Equipo
+## Equipo
 
 | Rol | Integrante |
 | --- | --- |
