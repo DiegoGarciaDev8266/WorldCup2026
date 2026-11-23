@@ -88,6 +88,6 @@ Configura las variables de entorno en un archivo `.env` (no versionado): conexi�
 - Respaldo automático entre proveedores de IA.
 - Pruebas automatizadas y gestor de secretos.
 
-## 📄 Licencia
+## Licencia
 
 Proyecto con fines académicos.
